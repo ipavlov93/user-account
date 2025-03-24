@@ -28,3 +28,25 @@ create table participants
             references users (id)
             on update on delete cascade,
 );
+
+create table meets
+(
+    id           serial primary key,
+    title        varchar(150)            not null,
+    status       varchar(50)             not null,
+    from         timestamp               not null,
+    to           timestamp               not null,
+    description  text                    not null,
+    link         text null,
+    organizer_id int                     not null,
+    created_by   int                     not null,
+    created_at   timestamp default now() not null,
+    constraint meets_users_organizer_id
+        foreign key (organizer_id)
+            references users (organizer_id)
+            on update on delete restrict,
+    constraint meets_users_created_by
+        foreign key (created_by)
+            references users (created_by)
+            on update on delete restrict,
+);
