@@ -9,12 +9,15 @@ import (
 type Participant struct {
 	ID string // type string to store hash or GUID
 	// fields set by participant himself or auth provider
-	FirstName    string
-	LastName     string
-	ContactEmail mail.Address
+	FirstName      string
+	LastName       string
+	ContactEmail   mail.Address
+	AvatarFileName string
 
 	User        User
 	Description string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 	DeletedAt   time.Time // soft delete
 }
 

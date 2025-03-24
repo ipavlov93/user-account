@@ -1,10 +1,10 @@
 package model_test
 
 import (
+	"event-calendar/model"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"net/mail"
-	"secret-santa/model"
 	"testing"
 )
 

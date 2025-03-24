@@ -14,6 +14,8 @@ type User struct {
 	EmailAddress mail.Address
 
 	Description string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 	DeletedAt   time.Time // soft delete
 }
 
