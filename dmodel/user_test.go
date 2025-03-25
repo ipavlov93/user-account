@@ -1,24 +1,23 @@
-package model_test
+package dmodel_test
 
 import (
-	"event-calendar/model"
+	"event-calendar/dmodel"
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	"net/mail"
 	"testing"
 )
 
 func TestNewUser(t *testing.T) {
 	// ARRANGE
-	user1 := createDummyUser("1")
+	user1 := createDummyUser(1)
 
 	// happy flow
 	t.Run("should create user and init giving fields", func(t *testing.T) {
 		// ACT
-		user2 := model.NewUser(
+		user2 := dmodel.NewUser(
 			user1.FirstName,
 			user1.LastName,
-			user1.EmailAddress.Address,
+			user1.EmailAddress,
 		)
 
 		// ASSERT
@@ -33,14 +32,15 @@ func TestNewUser(t *testing.T) {
 }
 
 // fill all the string fields with given value
-func createDummyUser(id string) *model.User {
-	return &model.User{
-		ID:        id,
-		FirstName: fmt.Sprintf("FirstName %s", id),
-		LastName:  fmt.Sprintf("LastName %s", id),
-		EmailAddress: mail.Address{
-			Name:    fmt.Sprintf("<Contact %s>", id),
-			Address: fmt.Sprintf("%s@test.com", id),
-		},
+func createDummyUser(id int) *dmodel.User {
+	return &dmodel.User{
+		ID:           int64(id),
+		FirstName:    fmt.Sprintf("FirstName %d", id),
+		LastName:     fmt.Sprintf("LastName %d", id),
+		EmailAddress: fmt.Sprintf("%d@test.com", id),
+		//EmailAddress: mail.Address{
+		//	Name:    fmt.Sprintf("<Contact %d>", id),
+		//	Address: fmt.Sprintf("%d@test.com", id),
+		//},
 	}
 }

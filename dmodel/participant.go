@@ -1,4 +1,4 @@
-package model
+package dmodel
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 )
 
 type Participant struct {
-	ID string // type string to store hash or GUID
+	ID int64
 	// fields set by participant himself or auth provider
 	FirstName      string
 	LastName       string
@@ -21,10 +21,10 @@ type Participant struct {
 	DeletedAt   time.Time // soft delete
 }
 
-func NewParticipant(firstName, lastName, email string, userID ...string) *Participant {
+func NewParticipant(firstName, lastName, emailAddress string, userID ...int64) *Participant {
 	//mail.ParseAddress(email)
 
-	uID := ""
+	uID := int64(0)
 	if len(userID) > 0 {
 		uID = userID[0]
 	}
@@ -34,7 +34,7 @@ func NewParticipant(firstName, lastName, email string, userID ...string) *Partic
 		LastName:  lastName,
 		ContactEmail: mail.Address{
 			Name:    fmt.Sprintf("%s %s", firstName, lastName),
-			Address: email,
+			Address: emailAddress,
 		},
 		User: User{
 			ID: uID,

@@ -1,4 +1,4 @@
-package model
+package dmodel
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 )
 
 type Meet struct {
-	ID          string
+	ID          int64
 	Title       string
 	Status      MeetStatus
 	From        time.Time
@@ -28,9 +28,9 @@ func NewMeet(
 	title string,
 	from, to time.Time,
 	description string,
-	creatorID string,
-	organizerID string,
-	attenderIDs []string,
+	creatorID int64,
+	organizerID int64,
+	attenderIDs []int64,
 ) Meet {
 	return newMeet(title, CREATED, from, to, description, creatorID, organizerID, attenderIDs)
 }
@@ -41,9 +41,9 @@ func NewScheduledMeet(
 	title string,
 	from, to time.Time,
 	description string,
-	creatorID string,
-	organizerID string,
-	attenderIDs []string,
+	creatorID int64,
+	organizerID int64,
+	attenderIDs []int64,
 ) Meet {
 	return newMeet(title, SCHEDULED, from, to, description, creatorID, organizerID, attenderIDs)
 }
@@ -54,9 +54,9 @@ func newMeet(
 	status MeetStatus,
 	from, to time.Time,
 	description string,
-	creatorID string,
-	organizerID string,
-	attenderIDs []string,
+	creatorID int64,
+	organizerID int64,
+	attenderIDs []int64,
 ) Meet {
 	meet := Meet{
 		Title:       title,
@@ -86,7 +86,7 @@ func newMeet(
 	return meet
 }
 
-func (m *Meet) AddParticipants(participantIDs []string) error {
+func (m *Meet) AddParticipants(participantIDs []int64) error {
 	if m == nil {
 		return nil
 	}
@@ -105,12 +105,12 @@ func (m *Meet) AddParticipants(participantIDs []string) error {
 	return nil
 }
 
-func (m *Meet) AddParticipant(participantID string) error {
+func (m *Meet) AddParticipant(participantID int64) error {
 	if m == nil {
 		return nil
 	}
-	if participantID == "" {
-		return fmt.Errorf("validation error: empty participant ID")
+	if participantID < 1 {
+		return fmt.Errorf("validation error: invalid participant ID")
 	}
 
 	// find or upsert in cache
@@ -124,10 +124,12 @@ func (m *Meet) AddParticipant(participantID string) error {
 	return nil
 }
 
-func (m *Meet) DeleteParticipant(participantID string) error {
-	if participantID == "" {
-		return fmt.Errorf("validation error: empty participant ID")
+func (m *Meet) DeleteParticipant(participantID int64) error {
+	if participantID < 1 {
+		return nil
 	}
+	//	return fmt.Errorf("validation error: invalid participant ID")
+	//}
 
 	for i, participant := range m.Participants {
 		if participant.ID == participantID {

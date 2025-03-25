@@ -1,7 +1,7 @@
-package model_test
+package dmodel_test
 
 import (
-	"event-calendar/model"
+	"event-calendar/dmodel"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"net/mail"
@@ -10,12 +10,12 @@ import (
 
 func TestNewParticipant(t *testing.T) {
 	// ARRANGE
-	participant1 := createDummyParticipant("1")
+	participant1 := createDummyParticipant(1)
 
 	// happy flow
 	t.Run("should create participant and init giving fields (no user ID)", func(t *testing.T) {
 		// ACT
-		participant2 := model.NewParticipant(
+		participant2 := dmodel.NewParticipant(
 			participant1.FirstName,
 			participant1.LastName,
 			participant1.ContactEmail.Address,
@@ -33,10 +33,10 @@ func TestNewParticipant(t *testing.T) {
 	// happy flow
 	t.Run("should create participant and init giving fields (with user ID)", func(t *testing.T) {
 		// ARRANGE
-		user1 := createDummyUser("1")
+		user1 := createDummyUser(1)
 
 		// ACT
-		participant2 := model.NewParticipant(
+		participant2 := dmodel.NewParticipant(
 			participant1.FirstName,
 			participant1.LastName,
 			participant1.ContactEmail.Address,
@@ -56,14 +56,14 @@ func TestNewParticipant(t *testing.T) {
 }
 
 // fill all the string fields with given value
-func createDummyParticipant(id string) *model.Participant {
-	return &model.Participant{
-		ID:        id,
-		FirstName: fmt.Sprintf("FirstName %s", id),
-		LastName:  fmt.Sprintf("LastName %s", id),
+func createDummyParticipant(id int) *dmodel.Participant {
+	return &dmodel.Participant{
+		ID:        int64(id),
+		FirstName: fmt.Sprintf("FirstName %d", id),
+		LastName:  fmt.Sprintf("LastName %d", id),
 		ContactEmail: mail.Address{
-			Name:    fmt.Sprintf("<Contact %s>", id),
-			Address: fmt.Sprintf("%s@test.com", id),
+			Name:    fmt.Sprintf("<Contact %d>", id),
+			Address: fmt.Sprintf("%d@test.com", id),
 		},
 	}
 }
