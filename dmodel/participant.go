@@ -2,7 +2,6 @@ package dmodel
 
 import (
 	"fmt"
-	"net/mail"
 	"time"
 )
 
@@ -11,44 +10,38 @@ type Participant struct {
 	// fields set by participant himself or auth provider
 	FirstName      string
 	LastName       string
-	ContactEmail   mail.Address
+	ContactEmail   string
 	AvatarFileName string
 
-	User        User
+	UserID      int64
 	Description string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	DeletedAt   time.Time // soft delete
+	// soft delete
+	DeletedAt time.Time
 }
 
 func NewParticipant(firstName, lastName, emailAddress string, userID ...int64) *Participant {
-	//mail.ParseAddress(email)
-
 	uID := int64(0)
 	if len(userID) > 0 {
 		uID = userID[0]
 	}
 
 	return &Participant{
-		FirstName: firstName,
-		LastName:  lastName,
-		ContactEmail: mail.Address{
-			Name:    fmt.Sprintf("%s %s", firstName, lastName),
-			Address: emailAddress,
-		},
-		User: User{
-			ID: uID,
-		},
+		FirstName:    firstName,
+		LastName:     lastName,
+		ContactEmail: emailAddress,
+		UserID:       uID,
 	}
 }
 
 func (p Participant) String() string {
-	return fmt.Sprintf("ID:%s, FullName:%s %s", p.ID, p.FirstName, p.LastName)
+	return fmt.Sprintf("ID:%d, FullName:%s %s", p.ID, p.FirstName, p.LastName)
 }
 
 func (p Participant) Equals(participant *Participant) bool {
 	if p.ID != participant.ID {
 		return false
 	}
-	return p.ContactEmail.Address == participant.ContactEmail.Address
+	return p.ContactEmail == participant.ContactEmail
 }

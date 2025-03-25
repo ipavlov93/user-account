@@ -21,21 +21,15 @@ type User struct {
 }
 
 func NewUser(firstName, lastName, emailAddress string) *User {
-	//mail.ParseAddress(email)
-
 	return &User{
 		FirstName:    firstName,
 		LastName:     lastName,
 		EmailAddress: emailAddress,
-		//EmailAddress: mail.Address{
-		//	Name:    fmt.Sprintf("%s %s", firstName, lastName),
-		//	Address: emailAddress,
-		//},
 	}
 }
 
 func (p User) String() string {
-	return fmt.Sprintf("ID:%s, FullName:%s %s", p.ID, p.FirstName, p.LastName)
+	return fmt.Sprintf("ID:%d, FullName:%s %s", p.ID, p.FirstName, p.LastName)
 }
 
 func (p User) Equals(participant *User) bool {
