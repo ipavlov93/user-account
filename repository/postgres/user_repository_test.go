@@ -26,9 +26,8 @@ func TestGetUsersCount(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"count"}).AddRow(10)
 	mock.ExpectQuery(`(?i)SELECT COUNT\(\*\) FROM users`).WillReturnRows(rows)
 
-	// Execute the function
-	ctx := context.Background()
-	count, err := repo.GetUsersCount(ctx)
+	// ACT
+	count, err := repo.GetUsersCount(context.Background())
 
 	// Assertions
 	assert.NoError(t, err)
@@ -63,7 +62,7 @@ func TestGetUserByID(t *testing.T) {
 		WithArgs(expectedUser.ID).
 		WillReturnRows(rows)
 
-	// Execute
+	// ACT
 	ctx := context.Background()
 	user, err := repo.GetUserByID(ctx, expectedUser.ID)
 
@@ -99,7 +98,7 @@ func TestGetUserByUUID(t *testing.T) {
 		WithArgs(expectedUser.UUID).
 		WillReturnRows(rows)
 
-	// Execute
+	// ACT
 	ctx := context.Background()
 	user, err := repo.GetUserByUUID(ctx, expectedUser.UUID)
 
@@ -136,7 +135,6 @@ func TestAddUser(t *testing.T) {
 		WillReturnRows(rows) // Return ID = 1
 
 	// ACT
-	// Execute
 	id, err := repo.AddUser(context.Background(), newUser)
 
 	// Assertions
