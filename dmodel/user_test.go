@@ -1,10 +1,12 @@
 package dmodel_test
 
 import (
-	"event-calendar/dmodel"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"event-calendar/dmodel"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewUser(t *testing.T) {
