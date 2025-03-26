@@ -2,6 +2,7 @@
 create table users
 (
     id            serial primary key,
+    uuid          int unique              not null,
     firstname     varchar(50) unique      not null,
     lastname      varchar(50) unique      not null,
     email_address varchar(100) unique     not null,
