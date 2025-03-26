@@ -24,7 +24,6 @@ var _ repository.UserRepository = (*UserRepository)(nil)
 func NewUserRepo(host string, port int64, user, password, dbname string) UserRepository {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
-	//DBConfig.Host, DBConfig.Port, DBConfig.Username, DBConfig.Password, DBConfig.DatabaseName)
 	connection, err := sqlx.Connect(driverName, psqlInfo)
 	if err != nil {
 		panic(fmt.Sprintf("failed to connect to database, %s", err))

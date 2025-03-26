@@ -20,8 +20,9 @@ type User struct {
 	DeletedAt time.Time `db:"deleted_at"`
 }
 
-func NewUser(firstName, lastName, emailAddress string) *User {
+func NewUser(uuid string, firstName, lastName, emailAddress string) *User {
 	return &User{
+		UUID:         uuid,
 		FirstName:    firstName,
 		LastName:     lastName,
 		EmailAddress: emailAddress,
@@ -34,6 +35,9 @@ func (p User) String() string {
 
 func (p User) Equals(participant *User) bool {
 	if p.ID != participant.ID {
+		return false
+	}
+	if p.UUID != participant.UUID {
 		return false
 	}
 	return p.EmailAddress == participant.EmailAddress

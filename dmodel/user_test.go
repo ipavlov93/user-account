@@ -15,19 +15,16 @@ func TestNewUser(t *testing.T) {
 	t.Run("should create user and init giving fields", func(t *testing.T) {
 		// ACT
 		user2 := dmodel.NewUser(
+			user1.UUID,
 			user1.FirstName,
 			user1.LastName,
 			user1.EmailAddress,
 		)
 
 		// ASSERT
+		assert.Equal(t, user2.FirstName, user1.FirstName)
 		assert.Equal(t, user2.LastName, user1.LastName)
-		assert.Equal(t, user2.LastName, user1.LastName)
-		assert.Equal(t, user2.LastName, user1.LastName)
-
-		//if !user2.Equals(user1) {
-		//	t.Errorf("got %s but want %s", user2, user1)
-		//}
+		assert.Equal(t, user2.EmailAddress, user1.EmailAddress)
 	})
 }
 
@@ -35,12 +32,9 @@ func TestNewUser(t *testing.T) {
 func createDummyUser(id int) *dmodel.User {
 	return &dmodel.User{
 		ID:           int64(id),
+		UUID:         fmt.Sprint(id),
 		FirstName:    fmt.Sprintf("FirstName %d", id),
 		LastName:     fmt.Sprintf("LastName %d", id),
 		EmailAddress: fmt.Sprintf("%d@test.com", id),
-		//EmailAddress: mail.Address{
-		//	Name:    fmt.Sprintf("<Contact %d>", id),
-		//	Address: fmt.Sprintf("%d@test.com", id),
-		//},
 	}
 }

@@ -1,11 +1,12 @@
 package dmodel_test
 
 import (
-	"event-calendar/dmodel"
 	"fmt"
-	"github.com/stretchr/testify/assert"
-	"net/mail"
 	"testing"
+
+	"event-calendar/dmodel"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewParticipant(t *testing.T) {
@@ -18,17 +19,13 @@ func TestNewParticipant(t *testing.T) {
 		participant2 := dmodel.NewParticipant(
 			participant1.FirstName,
 			participant1.LastName,
-			participant1.ContactEmail.Address,
+			participant1.ContactEmail,
 		)
 
 		// ASSERT
 		assert.Equal(t, participant2.LastName, participant1.LastName)
 		assert.Equal(t, participant2.LastName, participant1.LastName)
-		assert.Equal(t, participant2.ContactEmail.Address, participant1.ContactEmail.Address)
-
-		//if !participant2.Equals(participant1) {
-		//	t.Errorf("got %s but want %s", participant2, participant1)
-		//}
+		assert.Equal(t, participant2.ContactEmail, participant1.ContactEmail)
 	})
 	// happy flow
 	t.Run("should create participant and init giving fields (with user ID)", func(t *testing.T) {
@@ -39,31 +36,24 @@ func TestNewParticipant(t *testing.T) {
 		participant2 := dmodel.NewParticipant(
 			participant1.FirstName,
 			participant1.LastName,
-			participant1.ContactEmail.Address,
+			participant1.ContactEmail,
 			user1.ID,
 		)
 
 		// ASSERT
-		assert.Equal(t, participant2.User.ID, user1.ID)
+		assert.Equal(t, participant2.UserID, user1.ID)
 		assert.Equal(t, participant2.FirstName, participant1.FirstName)
 		assert.Equal(t, participant2.LastName, participant1.LastName)
-		assert.Equal(t, participant2.ContactEmail.Address, participant1.ContactEmail.Address)
-
-		//if !participant2.Equals(participant1) {
-		//	t.Errorf("got %s but want %s", participant2, participant1)
-		//}
+		assert.Equal(t, participant2.ContactEmail, participant1.ContactEmail)
 	})
 }
 
 // fill all the string fields with given value
 func createDummyParticipant(id int) *dmodel.Participant {
 	return &dmodel.Participant{
-		ID:        int64(id),
-		FirstName: fmt.Sprintf("FirstName %d", id),
-		LastName:  fmt.Sprintf("LastName %d", id),
-		ContactEmail: mail.Address{
-			Name:    fmt.Sprintf("<Contact %d>", id),
-			Address: fmt.Sprintf("%d@test.com", id),
-		},
+		ID:           int64(id),
+		FirstName:    fmt.Sprintf("FirstName %d", id),
+		LastName:     fmt.Sprintf("LastName %d", id),
+		ContactEmail: fmt.Sprintf("%d@test.com", id),
 	}
 }
