@@ -1,9 +1,10 @@
 package dmodel
 
 import (
-	"event-calendar/dmodel"
+	"database/sql"
 	"event-calendar/internal/domain"
-	"event-calendar/smodel"
+	"event-calendar/internal/dto/dmodel"
+	"event-calendar/internal/dto/smodel"
 )
 
 func UserToUserDto(user domain.User) dmodel.User {
@@ -13,8 +14,13 @@ func UserToUserDto(user domain.User) dmodel.User {
 		FirstName:    user.FirstName,
 		LastName:     user.LastName,
 		EmailAddress: user.EmailAddress,
-		Company:      user.Company,
-		Description:  user.Description,
+		Organization: user.Organization,
+		Description: func(desc string) sql.NullString {
+			return sql.NullString{
+				String: desc,
+				Valid:  len(desc) > 0,
+			}
+		}(user.Description),
 	}
 }
 
@@ -25,8 +31,8 @@ func UserDtoToUser(user dmodel.User) domain.User {
 		FirstName:    user.FirstName,
 		LastName:     user.LastName,
 		EmailAddress: user.EmailAddress,
-		Company:      user.Company,
-		Description:  user.Description,
+		Organization: user.Organization,
+		Description:  user.Description.String,
 	}
 }
 
@@ -38,7 +44,12 @@ func MapDto(user smodel.User) dmodel.User {
 		FirstName:    user.FirstName,
 		LastName:     user.LastName,
 		EmailAddress: user.EmailAddress.Address,
-		Company:      user.Company,
-		Description:  user.Description,
+		Organization: user.Organization,
+		Description: func(desc string) sql.NullString {
+			return sql.NullString{
+				String: desc,
+				Valid:  len(desc) > 0,
+			}
+		}(user.Description),
 	}
 }
