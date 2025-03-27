@@ -1,6 +1,7 @@
 package smodel
 
 import (
+	"event-calendar/dmodel"
 	"event-calendar/internal/domain"
 	"event-calendar/smodel"
 	"fmt"
@@ -31,5 +32,21 @@ func UserDtoToUser(user smodel.User) domain.User {
 		EmailAddress: user.EmailAddress.Address,
 		Company:      user.Company,
 		Description:  user.Description,
+	}
+}
+
+// MapDto maps Dmodel.User to Smodel.User
+func MapDto(user dmodel.User) smodel.User {
+	return smodel.User{
+		ID:        user.ID,
+		UUID:      user.UUID,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		EmailAddress: mail.Address{
+			Name:    fmt.Sprintf("%s %s", user.FirstName, user.LastName),
+			Address: user.EmailAddress,
+		},
+		Company:     user.Company,
+		Description: user.Description,
 	}
 }
