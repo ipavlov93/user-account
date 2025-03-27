@@ -15,11 +15,11 @@ type UserRepository struct {
 }
 
 // AddUser provides a mock function with given fields: ctx, user
-func (_m *UserRepository) AddUser(ctx context.Context, user dmodel.User) (int64, error) {
+func (_m *UserRepository) CreateUser(ctx context.Context, user dmodel.User) (int64, error) {
 	ret := _m.Called(ctx, user)
 
 	if len(ret) == 0 {
-		panic("no return value specified for AddUser")
+		panic("no return value specified for CreateUser")
 	}
 
 	var r0 int64

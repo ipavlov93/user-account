@@ -110,7 +110,7 @@ func TestGetUserByUUID(t *testing.T) {
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
 
-func TestAddUser(t *testing.T) {
+func TestCreateUser(t *testing.T) {
 	// Setup mock DB
 	db, mock, err := sqlmock.New()
 	assert.NoError(t, err)
@@ -136,7 +136,7 @@ func TestAddUser(t *testing.T) {
 		WillReturnRows(rows) // Return ID = 1
 
 	// ACT
-	id, err := repo.AddUser(context.Background(), newUser)
+	id, err := repo.CreateUser(context.Background(), newUser)
 
 	// Assertions
 	assert.NoError(t, err)
