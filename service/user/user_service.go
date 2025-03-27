@@ -2,8 +2,9 @@ package userservice
 
 import (
 	"context"
+	dmapper "event-calendar/mapper/user/dmodel"
+	smapper "event-calendar/mapper/user/smodel"
 
-	mapper "event-calendar/mapper/smodel"
 	"event-calendar/smodel"
 )
 
@@ -26,7 +27,7 @@ func (s UserService) GetUserByID(ctx context.Context, id int64) (userDto smodel.
 		return userDto, err
 	}
 
-	return mapper.UserToUserDto(user), nil
+	return smapper.MapDto(user), nil
 }
 
 func (s UserService) GetUserByUUID(ctx context.Context, uuid string) (userDto smodel.User, err error) {
@@ -38,11 +39,11 @@ func (s UserService) GetUserByUUID(ctx context.Context, uuid string) (userDto sm
 		return userDto, err
 	}
 
-	return mapper.UserToUserDto(user), nil
+	return smapper.MapDto(user), nil
 }
 
 func (s UserService) CreateUser(ctx context.Context, user smodel.User) (int64, error) {
-	ID, err := s.repository.CreateUser(ctx, mapper.UserDtoToUser(user))
+	userID, err := s.repository.CreateUser(ctx, dmapper.MapDto(user))
 	if err != nil {
 		//if errors.Is(err, repository.ErrDuplicate) {
 		//return customError with status code BadRequest
@@ -50,5 +51,5 @@ func (s UserService) CreateUser(ctx context.Context, user smodel.User) (int64, e
 		return 0, err
 	}
 
-	return ID, nil
+	return userID, nil
 }

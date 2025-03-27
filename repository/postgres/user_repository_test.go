@@ -136,11 +136,11 @@ func TestCreateUser(t *testing.T) {
 		WillReturnRows(rows) // Return ID = 1
 
 	// ACT
-	id, err := repo.CreateUser(context.Background(), newUser)
+	userID, err := repo.CreateUser(context.Background(), newUser)
 
 	// Assertions
 	assert.NoError(t, err)
-	assert.Equal(t, int64(1), id)
+	assert.Equal(t, int64(1), userID)
 
 	assert.NoError(t, mock.ExpectationsWereMet())
 }

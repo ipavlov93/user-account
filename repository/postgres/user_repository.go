@@ -59,13 +59,13 @@ func (repo UserRepository) GetUserByUUID(ctx context.Context, uuid string) (user
 	return user, err
 }
 
-func (repo UserRepository) CreateUser(ctx context.Context, user dmodel.User) (id int64, err error) {
+func (repo UserRepository) CreateUser(ctx context.Context, user dmodel.User) (userID int64, err error) {
 	err = repo.db.QueryRowContext(
 		ctx,
 		`INSERT INTO users (uuid, first_name, last_name, email_address, description)
 				VALUES ($1, $2, $3, $4, $5) RETURNING id`,
 		user.UUID, user.FirstName, user.LastName, user.EmailAddress, user.Description,
-	).Scan(&id)
+	).Scan(&userID)
 	if err != nil {
 		if len(err.Error()) > 50 {
 			if err.Error()[:50] == "pq: duplicate key value violates unique constraint" {
@@ -74,5 +74,5 @@ func (repo UserRepository) CreateUser(ctx context.Context, user dmodel.User) (id
 		}
 		return 0, err
 	}
-	return id, nil
+	return userID, nil
 }
