@@ -6,12 +6,14 @@ import (
 	"event-calendar/internal/domain"
 )
 
-//type AuthService interface {
-//	VerifyToken(token string) (claims auth.Claims, error)
-//}
-
 type UserService interface {
-	GetUserByID(ctx context.Context, id int64) (userDto domain.User, err error)
-	GetUserByUUID(ctx context.Context, uuid string) (domain.User, error)
+	GetUserByID(ctx context.Context, id int64) (user domain.User, found bool, err error)
+	GetUserByUUID(ctx context.Context, uuid string) (user domain.User, found bool, err error)
 	CreateUser(ctx context.Context, user domain.User) (int64, error)
+}
+
+type AuthService interface {
+	SignUp(ctx context.Context, token string) error
+	Login(ctx context.Context, token string) error
+	Logout(ctx context.Context, token string) error
 }

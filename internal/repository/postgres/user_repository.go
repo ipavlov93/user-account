@@ -52,7 +52,13 @@ func (repo UserRepository) GetUserByID(ctx context.Context, id int64) (user doma
 	err = repo.db.GetContext(ctx, &userDto,
 		`SELECT * FROM users
 				WHERE id = $1`, id)
-	return mapper.UserDtoToUser(userDto), err
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return user, repository.ErrNoRows
+		}
+		return user, err
+	}
+	return mapper.UserDtoToUser(userDto), nil
 }
 
 func (repo UserRepository) GetUserByUUID(ctx context.Context, uuid string) (user domain.User, err error) {
@@ -60,7 +66,13 @@ func (repo UserRepository) GetUserByUUID(ctx context.Context, uuid string) (user
 	err = repo.db.GetContext(ctx, &userDto,
 		`SELECT * FROM users
 				WHERE uuid = $1`, uuid)
-	return mapper.UserDtoToUser(userDto), err
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return user, repository.ErrNoRows
+		}
+		return user, err
+	}
+	return mapper.UserDtoToUser(userDto), nil
 }
 
 func (repo UserRepository) CreateUser(ctx context.Context, user domain.User) (userID int64, err error) {

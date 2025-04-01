@@ -35,22 +35,26 @@ func NewUser(
 	}
 }
 
-func (p User) String() string {
-	return fmt.Sprintf("ID:%d, FullName:%s %s", p.ID, p.FirstName, p.LastName)
+func (u User) String() string {
+	return fmt.Sprintf("ID:%d, FullName:%s %s", u.ID, u.FirstName, u.LastName)
 }
 
-func (p User) Equals(participant *User) bool {
-	if p.ID != participant.ID {
+func (u User) Equals(participant *User) bool {
+	if u.ID != participant.ID {
 		return false
 	}
-	if p.UUID != participant.UUID {
+	if u.UUID != participant.UUID {
 		return false
 	}
-	if !strings.EqualFold(p.FirstName, participant.FirstName) {
+	if !strings.EqualFold(u.FirstName, participant.FirstName) {
 		return false
 	}
-	if !strings.EqualFold(p.LastName, participant.LastName) {
+	if !strings.EqualFold(u.LastName, participant.LastName) {
 		return false
 	}
-	return strings.EqualFold(p.EmailAddress, participant.EmailAddress)
+	return strings.EqualFold(u.EmailAddress, participant.EmailAddress)
+}
+
+func (u User) HasValidID() bool {
+	return u.ID > 0
 }
