@@ -1,18 +1,19 @@
-package auth
+package claims
 
 import "database/sql"
 
 type FirebaseAuthClaims struct {
-	AuthTime      float64        `json:"auth_time"`
-	Email         string         `json:"email"`
-	EmailVerified bool           `json:"email_verified"`
-	Firebase      FirebaseClaims `json:"firebase"`
-	Name          string         `json:"name"`
-	PictureURL    string         `json:"picture"`
-	UserID        string         `json:"user_id"`
+	AuthTime               float64        `json:"auth_time"`
+	FirebaseIdentityClaims IdentityClaims `json:"firebase"`
+	Email                  string         `json:"email"`
+	EmailVerified          bool           `json:"email_verified"`
+	UserID                 string         `json:"user_id"`
+	// fields set by SignInProvider provider
+	Name       string `json:"name"`
+	PictureURL string `json:"picture"`
 }
 
-type FirebaseClaims struct {
+type IdentityClaims struct {
 	Identities     Identities
 	SignInProvider string `json:"sign_in_provider"`
 }
