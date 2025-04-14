@@ -1,0 +1,43 @@
+version: "3.7"
+
+services:
+  api:
+    container_name: bookly-api
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - ${HTTP_SERVER_PORT}:${HTTP_SERVER_PORT}
+    restart: on-failure
+    depends_on:
+      - db
+    environment:
+      - HTTP_SERVER_PORT=${HTTP_SERVER_PORT}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=db
+      - DB_PORT=${DB_PORT}
+    networks:
+      - bookly-network
+  db:
+    image: postgres:15
+    container_name: bookly_db
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - ./docker-init-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh:ro
+    networks:
+      - bookly-network
+
+volumes:
+  database_postgres:
+
+networks:
+  bookly-network:
+    driver: bridge
