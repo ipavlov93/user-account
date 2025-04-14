@@ -5,6 +5,7 @@ import "fmt"
 type MeetStatus string
 
 const (
+	UNKNOWN  MeetStatus = "Unknown"
 	CREATED  MeetStatus = "Created"
 	CANCELED MeetStatus = "Canceled"
 	//DEACTIVATED MeetStatus = "Deactivated"
@@ -14,7 +15,7 @@ const (
 	COMPLETED   MeetStatus = "Completed"
 )
 
-var stateName = map[MeetStatus]string{
+var stateMeetStatusNames = map[MeetStatus]string{
 	CREATED:     "Created",
 	CANCELED:    "Canceled",
 	SCHEDULED:   "Scheduled",
@@ -23,7 +24,7 @@ var stateName = map[MeetStatus]string{
 }
 
 func (m MeetStatus) String() string {
-	s, ok := stateName[m]
+	s, ok := stateMeetStatusNames[m]
 	if !ok {
 		return fmt.Sprintf("MeetStatus(%s)", string(m))
 	}
@@ -31,7 +32,7 @@ func (m MeetStatus) String() string {
 }
 
 func (m MeetStatus) transition(meetStatus MeetStatus) (MeetStatus, error) {
-	_, ok := stateName[m]
+	_, ok := stateMeetStatusNames[m]
 	if !ok {
 		panic(fmt.Errorf("unknown meet status: %s", meetStatus))
 	}
@@ -52,5 +53,5 @@ func (m MeetStatus) transition(meetStatus MeetStatus) (MeetStatus, error) {
 	default:
 		return m, fmt.Errorf("can't set meet status %s to %s", m, meetStatus)
 	}
-	return meetStatus, nil
+	return UNKNOWN, nil
 }

@@ -49,6 +49,9 @@ func (p Participant) String() string {
 }
 
 func (p Participant) Equals(participant *Participant) bool {
+	if participant == nil {
+		return false
+	}
 	if p.ID != participant.ID {
 		return false
 	}

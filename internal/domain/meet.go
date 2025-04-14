@@ -9,8 +9,8 @@ type Meet struct {
 	ID          int64
 	Title       string
 	Status      MeetStatus
-	From        time.Time
-	To          time.Time
+	StartedAt   time.Time
+	FinishedAt  time.Time
 	Description string
 	Link        string
 
@@ -25,33 +25,36 @@ type Meet struct {
 // Set status CREATED.
 func NewMeet(
 	title string,
-	from, to time.Time,
+	startedAt time.Time,
+	finishedAt time.Time,
 	description string,
 	creatorID int64,
 	organizerID int64,
 	attenderIDs []int64,
 ) Meet {
-	return newMeet(title, CREATED, from, to, description, creatorID, organizerID, attenderIDs)
+	return newMeet(title, CREATED, startedAt, finishedAt, description, creatorID, organizerID, attenderIDs)
 }
 
 // NewScheduledMeet init meet with given fields.
 // Set status SCHEDULED.
 func NewScheduledMeet(
 	title string,
-	from, to time.Time,
+	startedAt time.Time,
+	finishedAt time.Time,
 	description string,
 	creatorID int64,
 	organizerID int64,
 	attenderIDs []int64,
 ) Meet {
-	return newMeet(title, SCHEDULED, from, to, description, creatorID, organizerID, attenderIDs)
+	return newMeet(title, SCHEDULED, startedAt, finishedAt, description, creatorID, organizerID, attenderIDs)
 }
 
 // newMeet init meet with given fields.
 func newMeet(
 	title string,
 	status MeetStatus,
-	from, to time.Time,
+	startedAt time.Time,
+	finishedAt time.Time,
 	description string,
 	creatorID int64,
 	organizerID int64,
@@ -60,8 +63,8 @@ func newMeet(
 	meet := Meet{
 		Title:       title,
 		Status:      status,
-		From:        from,
-		To:          to,
+		StartedAt:   startedAt,
+		FinishedAt:  finishedAt,
 		Description: description,
 		OrganizerID: Participant{
 			ID: organizerID,

@@ -1,14 +1,16 @@
 package domain
 
 import (
+	"event-calendar/internal/domain/claims"
 	"fmt"
-	"strings"
 )
 
 type User struct {
-	ID   int64
-	UUID string
-	// fields set by participant himself or auth provider
+	ID          int64
+	FirebaseUID string
+	Roles       []claims.Role
+	// fields set by participant himself or identity/auth provider
+	BusinessName string
 	FirstName    string
 	LastName     string
 	EmailAddress string
@@ -18,15 +20,19 @@ type User struct {
 }
 
 func NewUser(
-	uuid string,
+	firebaseUID string,
+	businessName string,
 	firstName string,
 	lastName string,
 	emailAddress string,
 	organization string,
 	description string,
+	roles ...claims.Role,
 ) User {
 	return User{
-		UUID:         uuid,
+		Roles:        roles,
+		FirebaseUID:  firebaseUID,
+		BusinessName: businessName,
 		FirstName:    firstName,
 		LastName:     lastName,
 		EmailAddress: emailAddress,
@@ -36,23 +42,21 @@ func NewUser(
 }
 
 func (u User) String() string {
-	return fmt.Sprintf("ID:%d, FullName:%s %s", u.ID, u.FirstName, u.LastName)
+	return fmt.Sprintf("ID: %d, FirebaseUID: %s, BusinessName: %s, FullName: %s %s, EmailAddress: %s",
+		u.ID, u.FirebaseUID, u.BusinessName, u.FirstName, u.LastName, u.EmailAddress)
 }
 
-func (u User) Equals(participant *User) bool {
-	if u.ID != participant.ID {
+func (u User) Equals(user *User) bool {
+	if user == nil {
 		return false
 	}
-	if u.UUID != participant.UUID {
+	if u.ID != user.ID {
 		return false
 	}
-	if !strings.EqualFold(u.FirstName, participant.FirstName) {
+	if u.FirebaseUID != user.FirebaseUID {
 		return false
 	}
-	if !strings.EqualFold(u.LastName, participant.LastName) {
-		return false
-	}
-	return strings.EqualFold(u.EmailAddress, participant.EmailAddress)
+	return true
 }
 
 func (u User) HasValidID() bool {
