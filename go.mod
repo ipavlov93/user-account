@@ -5,7 +5,11 @@ go 1.24
 require (
 	firebase.google.com/go/v4 v4.15.2
 	github.com/DATA-DOG/go-sqlmock v1.5.2
+	github.com/MicahParks/jwkset v0.9.5
+	github.com/golang-jwt/jwt/v5 v5.2.2
+	github.com/lib/pq v1.10.9
 	github.com/stretchr/testify v1.10.0
+	google.golang.org/api v0.228.0
 )
 
 require (
@@ -53,7 +57,6 @@ require (
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
 	golang.org/x/time v0.11.0 // indirect
-	google.golang.org/api v0.228.0 // indirect
 	google.golang.org/appengine/v2 v2.0.6 // indirect
 	google.golang.org/genproto v0.0.0-20241118233622-e639e219e697 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250106144421-5f5ef82da422 // indirect
