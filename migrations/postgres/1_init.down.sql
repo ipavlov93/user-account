@@ -1,4 +1,3 @@
 -- +goose Down
 drop table users;
-drop table participants;
-drop table meets;
+drop table user_accounts;
