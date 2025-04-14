@@ -24,7 +24,7 @@ type Participant struct {
 
 func (p Participant) String() string {
 	return fmt.Sprintf(
-		"ID: %d, FullName: %s %s, Email: %s",
+		"ID: %d, FullName: %s %s, EmailAddress: %s",
 		p.ID,
 		p.FirstName,
 		p.LastName,

@@ -6,16 +6,18 @@ import (
 )
 
 type User struct {
-	ID   int64  `json:"id"`
-	UUID string `json:"uuid"`
-	// fields set by participant himself or auth provider
-	FirstName    string       `json:"firstName"`
-	LastName     string       `json:"lastName"`
+	ID           int64        `json:"id"`
+	FirebaseUID  string       `json:"uuid"`
 	EmailAddress mail.Address `json:"email_address"`
-	Organization string       `json:"organization"`
-	Description  string       `json:"description"`
+	// fields set by user himself
+	BusinessName string `json:"businessName"`
+	FirstName    string `json:"firstName"`
+	LastName     string `json:"lastName"`
+	Organization string `json:"organization"`
+	Description  string `json:"description"`
 }
 
 func (p User) String() string {
-	return fmt.Sprintf("ID: %d, FullName: %s %s, UUID: %s, Email: %s", p.ID, p.FirstName, p.LastName, p.UUID, p.EmailAddress)
+	return fmt.Sprintf("ID: %d, FirebaseUID: %s, BusinessName: %s, FullName: %s %s, EmailAddress: %s",
+		p.ID, p.FirebaseUID, p.BusinessName, p.FirstName, p.LastName, p.EmailAddress)
 }

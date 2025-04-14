@@ -7,13 +7,14 @@ import (
 )
 
 type User struct {
-	ID   int64  `db:"id"`
-	UUID string `db:"uuid"`
-	// fields set by participant himself or auth provider
-	FirstName    string         `db:"first_name"`
-	LastName     string         `db:"last_name"`
-	EmailAddress string         `db:"email_address"`
-	Organization string         `db:"organization"`
+	ID           int64  `db:"id"`
+	FirebaseUID  string `db:"firebase_uid"`
+	EmailAddress string `db:"email_address"`
+	// fields set by user himself
+	BusinessName sql.NullString `db:"business_name"`
+	FirstName    sql.NullString `db:"first_name"`
+	LastName     sql.NullString `db:"last_name"`
+	Organization sql.NullString `db:"organization"`
 	Description  sql.NullString `db:"description"`
 	CreatedAt    time.Time      `db:"created_at"`
 	UpdatedAt    time.Time      `db:"updated_at"`
@@ -22,5 +23,6 @@ type User struct {
 }
 
 func (p User) String() string {
-	return fmt.Sprintf("ID: %d, FullName: %s %s, UUID: %s, Email: %s", p.ID, p.FirstName, p.LastName, p.UUID, p.EmailAddress)
+	return fmt.Sprintf("ID: %d, FirebaseUID: %s, EmailAddress: %s",
+		p.ID, p.FirebaseUID, p.EmailAddress)
 }
