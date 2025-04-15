@@ -75,7 +75,7 @@ func (repo UserRepository) CreateUser(ctx context.Context, user domain.User) (us
 	).Scan(&userID)
 	if err != nil {
 		if len(err.Error()) > 50 {
-			if err.Error()[:50] == "pq: duplicate key value violates unique constraint" {
+			if err.Error()[:50] == pqDuplicateErr {
 				return 0, repository.ErrDuplicate
 			}
 		}

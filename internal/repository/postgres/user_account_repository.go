@@ -23,20 +23,6 @@ func NewUserAccountRepository(dbDriver sqlx.ExtContext) UserAccountRepository {
 	}
 }
 
-//func (repo UserAccountRepository) GetUserAccountByID(ctx context.Context, id int64) (user domain.UserAccount, err error) {
-//	var userAccountDto dmodel.UserAccount
-//	err = sqlx.GetContext(ctx, repo.dbDriver, &userAccountDto,
-//		`SELECT * FROM user_accounts
-//				WHERE id = $1`, id)
-//	if err != nil {
-//		if errors.Is(err, sql.ErrNoRows) {
-//			return user, repository.ErrNoRows
-//		}
-//		return user, err
-//	}
-//	return mapper.UserAccountDtoToUserAccount(userAccountDto), nil
-//}
-
 func (repo UserAccountRepository) ListUserAccountsByUserID(ctx context.Context, userID int64) (userAccounts []domain.UserAccount, err error) {
 	var userAccountDtos []dmodel.UserAccount
 
@@ -68,7 +54,7 @@ func (repo UserAccountRepository) createUserAccountIgnoreDuplicate(ctx context.C
 	).Scan(&userAccountID)
 	if err != nil {
 		if len(err.Error()) > 50 {
-			if err.Error()[:50] == "pq: duplicate key value violates unique constraint" {
+			if err.Error()[:50] == pqDuplicateErr {
 				return 0, repository.ErrDuplicate
 			}
 		}
@@ -86,7 +72,7 @@ func (repo UserAccountRepository) createUserAccount(ctx context.Context, user do
 	).Scan(&userAccountID)
 	if err != nil {
 		if len(err.Error()) > 50 {
-			if err.Error()[:50] == "pq: duplicate key value violates unique constraint" {
+			if err.Error()[:50] == pqDuplicateErr {
 				return 0, repository.ErrDuplicate
 			}
 		}
