@@ -17,7 +17,7 @@ func NewPostgresAdapter(host string, port int, user, password, dbname string) Po
 		host, port, user, password, dbname)
 	connection, err := sqlx.Connect("postgres", psqlInfo)
 	if err != nil {
-		panic(fmt.Sprintf("Failed to connect to database, %s", err))
+		panic(fmt.Sprintf("failed to connect to database, %s", err))
 	}
 
 	return PostgresAdapter{sqlxDB: connection}
@@ -31,7 +31,7 @@ func (db *PostgresAdapter) GetConnection() *sqlx.DB {
 func (db *PostgresAdapter) MustBeginTx(ctx context.Context, options *sql.TxOptions) *sqlx.Tx {
 	tx, err := db.sqlxDB.BeginTxx(ctx, options)
 	if err != nil {
-		panic(fmt.Sprintf("Failed to start transaction, %s", err))
+		panic(fmt.Sprintf("failed to start transaction, %s", err))
 	}
 	return tx
 }
@@ -40,21 +40,18 @@ func (db *PostgresAdapter) MustBeginTx(ctx context.Context, options *sql.TxOptio
 func mustRollbackTx(tx *sqlx.Tx) {
 	err := tx.Rollback()
 	if err != nil {
-		panic(fmt.Sprintf("Failed to rollback transaction, %s", err))
+		panic(fmt.Sprintf("failed to rollback transaction, %s", err))
 	}
 }
 
 // MustRollbackTxUnlessCommitted commits the not nil transaction.
 // It tries to rollback tx if commit has failed.
 // MustRollbackTxUnlessCommitted name is preferred than MustCommit.
-func (db *PostgresAdapter) MustRollbackTxUnlessCommitted(tx *sqlx.Tx) error {
+func (db *PostgresAdapter) MustRollbackTxUnlessCommitted(tx *sqlx.Tx) {
 	if tx == nil {
-		return fmt.Errorf("tx is empty")
+		return
 	}
 	if err := tx.Commit(); err != nil {
 		mustRollbackTx(tx)
-		return err
 	}
-
-	return nil
 }
