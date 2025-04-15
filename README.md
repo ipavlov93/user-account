@@ -64,5 +64,5 @@ SOLID ?
 
 #### Patterns
 - DTOs
-- Mapper ?
+- Mapper
 - Service facade
