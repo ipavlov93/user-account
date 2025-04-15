@@ -9,20 +9,6 @@
 3. Sqlx db driver (adapter) is chosen for simplicity on current stage.
 4. Firebase auth is used as abstraction for OAuth2.0 (protocol) and implement Single-sign-in authentication flow.
 
-## Flow
-
-0. What happened if change name or email after participant was added to any meet ?
-
-## GitHub issues
-
-Tasks described below should be synced with issues:
-https://github.com/users/ipavlov93/projects/1/views/1
-
-### Tech Tasks
-
-0. Add audit fields to models: createdAt, deletedAt, etc.
-1. Add repository, service, facade, controller (handlers) layers.
-2. Add unit tests for each of the layers.
-
-
-### Business Logic Tasks
+## Tech Tasks
+1. Add router and connect with controller (handlers) layer.
+2. Add integration tests.
