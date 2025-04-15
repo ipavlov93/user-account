@@ -24,6 +24,7 @@ create table user_accounts
     -- todo: create FK to Issuers table
     subject_uid   varchar(100) null,
     email_address varchar(100) not null,
+    created_at    timestamp default now() not null,
     constraint user_accounts_users_user_id
         foreign key (user_id)
             references users (id)
