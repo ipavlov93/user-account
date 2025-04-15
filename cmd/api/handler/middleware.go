@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"event-calendar/internal/domain/claims"
@@ -13,20 +15,31 @@ import (
 )
 
 const (
-	bearerPrefix         = "Bearer "
-	authorizationHeader  = "Authorization"
-	authenticationHeader = "Authentication"
+	bearerPrefix        = "Bearer "
+	authorizationHeader = "Authorization"
 
-	tokenClaimsKey = "claims"
+	firebaseClaimsKey = "firebase-claims"
+	userClaimsKey     = "user-claims"
+
+	loggerPrefix = "api-middleware"
 )
 
 type AuthMiddleware struct {
 	firebaseAuthService firebaseauth.FirebaseAuthService
+	logger              *log.Logger
 }
 
+// NewAuthMiddleware set default logger. Use WithOption() to set custom logger.
 func NewAuthMiddleware(service firebaseauth.FirebaseAuthService) AuthMiddleware {
 	return AuthMiddleware{
 		firebaseAuthService: service,
+		logger:              log.New(os.Stdout, loggerPrefix, log.LstdFlags|log.Lshortfile),
+	}
+}
+
+func (m AuthMiddleware) WithOption(logger *log.Logger) {
+	if logger != nil {
+		m.logger = logger
 	}
 }
 
@@ -37,6 +50,7 @@ func (m AuthMiddleware) RequireValidIDToken(next http.Handler) http.Handler {
 			http.Error(rw,
 				fmt.Sprintf("%s: %v", http.StatusText(http.StatusBadRequest), err),
 				http.StatusBadRequest)
+			return
 		}
 
 		idToken, err := m.firebaseAuthService.VerifyIDToken(token)
@@ -44,30 +58,34 @@ func (m AuthMiddleware) RequireValidIDToken(next http.Handler) http.Handler {
 			http.Error(rw,
 				http.StatusText(http.StatusUnauthorized),
 				http.StatusUnauthorized)
+			return
 		}
 
 		parsedClaims, err := parseIDTokenClaims(idToken.Claims)
 		if err != nil {
-			//log.Errorf("Parse ID token claims error: %s", err)
+			m.logger.Printf("parseIDTokenClaims(): %s", err)
 			http.Error(rw,
 				http.StatusText(http.StatusInternalServerError),
 				http.StatusInternalServerError)
+			return
 		}
 
-		ctx := context.WithValue(r.Context(), tokenClaimsKey, parsedClaims)
+		// set claims to context
+		ctx := context.WithValue(r.Context(), firebaseClaimsKey, parsedClaims)
 
-		// Proceed with the request handling
+		// proceed with the request handling
 		next.ServeHTTP(rw, r.WithContext(ctx))
 	})
 }
 
-func RequireValidAccessToken(next http.Handler) http.Handler {
+func (m AuthMiddleware) RequireValidAccessToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		accessToken, err := retrieveBearerToken(r)
 		if err != nil {
 			http.Error(rw,
 				fmt.Sprintf("%s: %v", http.StatusText(http.StatusUnauthorized), err),
 				http.StatusUnauthorized)
+			return
 		}
 
 		// Initialize JWK Set client with your JWK Set URLs
@@ -77,10 +95,10 @@ func RequireValidAccessToken(next http.Handler) http.Handler {
 		}
 		jwks, err := auth.InitializeJWKSetClient(jwksURLs)
 		if err != nil {
+			m.logger.Printf("InitializeJWKSetClient(): %s", err)
 			http.Error(rw,
-				fmt.Sprintf("failed to initialize JWK Set client: %v", err),
+				http.StatusText(http.StatusInternalServerError),
 				http.StatusInternalServerError)
-
 			return
 		}
 
@@ -90,11 +108,10 @@ func RequireValidAccessToken(next http.Handler) http.Handler {
 			http.Error(rw,
 				http.StatusText(http.StatusUnauthorized),
 				http.StatusUnauthorized)
-
 			return
 		}
 
-		r.WithContext(context.WithValue(r.Context(), "userClaims", userClaims))
+		r.WithContext(context.WithValue(r.Context(), userClaimsKey, userClaims))
 
 		// Proceed with the request handling
 		next.ServeHTTP(rw, r)
@@ -116,5 +133,5 @@ func parseIDTokenClaims(claimsMap map[string]any) (parsed *claims.FirebaseAuthCl
 	}
 
 	err = json.Unmarshal(bt, &parsed)
-	return parsed, err
+	return parsed, fmt.Errorf("parse ID token claims error")
 }
