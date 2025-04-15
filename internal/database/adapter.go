@@ -10,5 +10,5 @@ type DBAdapter interface {
 	GetConnection() *sqlx.DB
 	MustBeginTx(ctx context.Context, options *sql.TxOptions) *sqlx.Tx
 	// MustRollbackTxUnlessCommitted name is preferred than MustCommit
-	MustRollbackTxUnlessCommitted(tx *sqlx.Tx) error
+	MustRollbackTxUnlessCommitted(tx *sqlx.Tx)
 }

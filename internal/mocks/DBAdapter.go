@@ -58,21 +58,8 @@ func (_m *DBAdapter) MustBeginTx(ctx context.Context, options *sql.TxOptions) *s
 }
 
 // MustRollbackTxUnlessCommitted provides a mock function with given fields: tx
-func (_m *DBAdapter) MustRollbackTxUnlessCommitted(tx *sqlx.Tx) error {
-	ret := _m.Called(tx)
-
-	if len(ret) == 0 {
-		panic("no return value specified for MustRollbackTxUnlessCommitted")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(*sqlx.Tx) error); ok {
-		r0 = rf(tx)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
+func (_m *DBAdapter) MustRollbackTxUnlessCommitted(tx *sqlx.Tx) {
+	_m.Called(tx)
 }
 
 // NewDBAdapter creates a new instance of DBAdapter. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
