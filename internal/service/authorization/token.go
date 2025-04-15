@@ -3,6 +3,7 @@ package authorization
 import (
 	"context"
 	"crypto"
+	"encoding/json"
 	"fmt"
 
 	"event-calendar/internal/domain/claims"
@@ -61,26 +62,45 @@ func VerifyAccessToken(jwks jwkset.Storage, accessToken string) (userClaims clai
 		return userClaims, fmt.Errorf("failed to parse token claims")
 	}
 
-	// TODO: parse claims using json marshal, unmarshal
-
-	// Extract standard and custom claims
-	userClaims = claims.UserClaims{
-		Subject: claimsMap["sub"].(string),
-		Issuer:  claimsMap["iss"].(string),
+	userClaims, err = parseUserClaims(claimsMap)
+	if err != nil {
+		return userClaims, fmt.Errorf("failed to parse user claims: %w", err)
 	}
 
-	// Required custom claim
-	if firebaseUID, exists := claimsMap["firebase_uid"].(string); exists {
-		userClaims.FirebaseUID = firebaseUID
-	}
-
-	// Optional claims
-	if email, exists := claimsMap["email"].(string); exists {
-		userClaims.Email = email
-	}
-	if roles, exists := claimsMap["roles"].([]claims.Role); exists {
-		userClaims.Roles = roles
-	}
+	// TODO: delete commented code after testing the flow
+	//// Extract standard and custom claims
+	//userClaims = claims.UserClaims{
+	//	Subject: claimsMap["sub"].(string),
+	//	Issuer:  claimsMap["iss"].(string),
+	//}
+	//
+	//// Required custom claim
+	//if firebaseUID, exists := claimsMap["firebase_uid"].(string); exists {
+	//	userClaims.FirebaseUID = firebaseUID
+	//}
+	//
+	//// Optional claims
+	//if email, exists := claimsMap["email"].(string); exists {
+	//	userClaims.Email = email
+	//}
+	//if roles, exists := claimsMap["roles"].([]claims.Role); exists {
+	//	userClaims.Roles = roles
+	//}
 
 	return userClaims, nil
+}
+
+func parseUserClaims(claimsMap map[string]any) (parsedUserClaims claims.UserClaims, err error) {
+	claimsJSON, err := json.Marshal(claimsMap)
+	if err != nil {
+		return parsedUserClaims, fmt.Errorf("failed to marshal claims: %w", err)
+	}
+
+	parsedUserClaims = claims.UserClaims{}
+	err = json.Unmarshal(claimsJSON, &parsedUserClaims)
+	if err != nil {
+		return parsedUserClaims, fmt.Errorf("failed to unmarshal claims: %w", err)
+	}
+
+	return parsedUserClaims, nil
 }
