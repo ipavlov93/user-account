@@ -11,3 +11,7 @@ Add integration tests using https://github.com/ory/dockertest
 ### Controller layer & Router
 
 Add router and connect with controller (handlers) layer.
+
+### App errors wrapper
+
+Add errors wrapper. It allows to return error description by API handlers.
