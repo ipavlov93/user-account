@@ -12,7 +12,10 @@ type PostgresAdapter struct {
 	sqlxDB *sqlx.DB
 }
 
-func NewPostgresAdapter(host string, port int, user, password, dbname string) PostgresAdapter {
+// MustNewPostgresAdapter tries to connect to Postgres database, panics if connection has failed.
+// WARNING: sslmode is disabled. It's not recommended use disabled sslmode in production.
+// MustNewPostgresAdapter returns PostgresAdapter
+func MustNewPostgresAdapter(host string, port int, user, password, dbname string) PostgresAdapter {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 	connection, err := sqlx.Connect("postgres", psqlInfo)
@@ -36,15 +39,18 @@ func (db *PostgresAdapter) MustBeginTx(ctx context.Context, options *sql.TxOptio
 	return tx
 }
 
-// mustRollbackTx tries to rollback transaction, panics if rollback failed.
+// mustRollbackTx tries to rollback not nil transaction, panics if rollback failed.
 func mustRollbackTx(tx *sqlx.Tx) {
+	if tx == nil {
+		return
+	}
 	err := tx.Rollback()
 	if err != nil {
 		panic(fmt.Sprintf("failed to rollback transaction, %s", err))
 	}
 }
 
-// MustRollbackTxUnlessCommitted commits the not nil transaction.
+// MustRollbackTxUnlessCommitted commits not nil transaction.
 // It tries to rollback tx if commit has failed.
 // MustRollbackTxUnlessCommitted name is preferred than MustCommit.
 func (db *PostgresAdapter) MustRollbackTxUnlessCommitted(tx *sqlx.Tx) {
