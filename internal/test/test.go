@@ -19,7 +19,6 @@ func CreateTestClaims(value string) claims.FirebaseAuthClaims {
 		Name:       value,
 		PictureURL: value,
 		UserID:     value,
-		SubjectUID: value,
 	}
 }
 
