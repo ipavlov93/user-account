@@ -2,11 +2,11 @@ package authentication
 
 import (
 	"context"
-	"google.golang.org/api/option"
 	"time"
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
+	"google.golang.org/api/option"
 )
 
 type FirebaseAuthService struct {

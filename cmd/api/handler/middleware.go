@@ -63,7 +63,7 @@ func (m AuthMiddleware) RequireValidIDToken(next http.Handler) http.Handler {
 
 		parsedClaims, err := parseIDTokenClaims(idToken.Claims)
 		if err != nil {
-			m.logger.Printf("parseIDTokenClaims(): %s", err)
+			m.logger.Printf("parseIDTokenClaims(): parse ID token claims error %s", err)
 			http.Error(rw,
 				http.StatusText(http.StatusInternalServerError),
 				http.StatusInternalServerError)
@@ -126,16 +126,16 @@ func retrieveBearerToken(r *http.Request) (string, error) {
 	return strings.TrimPrefix(authHeader, bearerPrefix), nil
 }
 
-func parseIDTokenClaims(claimsMap map[string]any) (parsed *claims.FirebaseAuthClaims, err error) {
+func parseIDTokenClaims(claimsMap map[string]any) (parsedClaims *claims.FirebaseAuthClaims, err error) {
 	claimsJSON, err := json.Marshal(claimsMap)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to marshal claims: %w", err)
 	}
 
-	parsed = &claims.FirebaseAuthClaims{}
-	err = json.Unmarshal(claimsJSON, parsed)
+	parsedClaims = &claims.FirebaseAuthClaims{}
+	err = json.Unmarshal(claimsJSON, parsedClaims)
 	if err != nil {
-		return nil, fmt.Errorf("parse ID token claims error")
+		return nil, fmt.Errorf("failed to unmarshal claims: %w", err)
 	}
-	return parsed, nil
+	return parsedClaims, nil
 }
