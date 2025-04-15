@@ -1,0 +1,4 @@
+
+### Login request
+GET http://{{host}}/login
+Authorization: Bearer {{token}}
