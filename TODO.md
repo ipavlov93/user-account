@@ -1,19 +1,13 @@
 ## TODO list
 
 ### Auth
-1. Add cache to store token after it's been verified and minimize amount of future requests.
-2. Add store and reset OAuth cookies (on login and logout).
-3. 	SetCustomClaims to token
-- test auth after SetFirebaseUID, does token (access or id?) contains firebaseUID
-- Add key to (session) cache if SetFirebaseUID doesn't work
+1. 	SetCustomClaims to token (for example, SetFirebaseUID)
+Test: does token contain custom claims ?
+2. Sign-in flow. Set roles and privileges (permissions)
 
-4. How to set or create user with roles or privileges in OIDC (OAuth) flow ? Set them to token claims.
-- Sign in flow first. Set roles and privileges (permissions)
-- ??? Create user with given roles and privileges. 
-- Optional: send email with confirmation link (with expiration time).
+### Integration tests
+Add integration tests using https://github.com/ory/dockertest
 
-### Tests
+### Controller layer & Router
 
-#### Unit tests
-1. add service layer test that is mostly copy of repo tests.
-2. add service facade layer test that is partially copy of repo tests.
+Add router and connect with controller (handlers) layer.
