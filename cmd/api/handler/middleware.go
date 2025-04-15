@@ -127,11 +127,15 @@ func retrieveBearerToken(r *http.Request) (string, error) {
 }
 
 func parseIDTokenClaims(claimsMap map[string]any) (parsed *claims.FirebaseAuthClaims, err error) {
-	bt, err := json.Marshal(claimsMap)
+	claimsJSON, err := json.Marshal(claimsMap)
 	if err != nil {
 		return nil, err
 	}
 
-	err = json.Unmarshal(bt, &parsed)
-	return parsed, fmt.Errorf("parse ID token claims error")
+	parsed = &claims.FirebaseAuthClaims{}
+	err = json.Unmarshal(claimsJSON, parsed)
+	if err != nil {
+		return nil, fmt.Errorf("parse ID token claims error")
+	}
+	return parsed, nil
 }

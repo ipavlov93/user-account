@@ -30,6 +30,7 @@ func (c AuthController) WithOption(logger *log.Logger) {
 func (c AuthController) LoginHandler(rw http.ResponseWriter, r *http.Request) {
 	claims, ok := getTokenClaims(r.Context())
 	if claims == nil || !ok {
+		c.logger.Printf("request context contains not valid claims. %T are expected", claims)
 		http.Error(rw,
 			"empty claims",
 			http.StatusInternalServerError)
