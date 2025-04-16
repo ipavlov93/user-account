@@ -19,7 +19,7 @@ type AuthService interface {
 type FirebaseAuthService interface {
 	VerifyIDToken(idToken string) (token *auth.Token, err error)
 	RevokeRefreshTokens(ctx context.Context, idToken string) error
-	SetFirebaseUID(firebaseUID string) error
+	SetRolePrivilegesToClaims(firebaseUID string, roles []claims.Role) error
 }
 
 type UserService interface {

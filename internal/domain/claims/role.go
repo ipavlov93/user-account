@@ -11,16 +11,16 @@ const (
 )
 
 func ConvertRole(roleName string) Role {
-	if roleName == "ROLE_SUPER_ADMIN" {
+	switch Role(roleName) {
+	case RoleSuperAdmin:
 		return RoleSuperAdmin
-	} else if roleName == "ROLE_ADMIN" {
+	case RoleAdmin:
 		return RoleAdmin
-	} else if roleName == "ROLE_USER" {
+	case RoleUser:
 		return RoleUser
-	} else if roleName == "ROLE_ANONYMOUS" {
+	case RoleAnonymous:
 		return RoleAnonymous
 	}
-
 	return UnknownRole
 }
 
