@@ -15,3 +15,7 @@ Add router and connect with controller (handlers) layer.
 ### App errors wrapper
 
 Add errors wrapper. It allows to return error description by API handlers.
+
+### Graceful shutdown
+
+Add graceful shutdown for opened connections and http server.

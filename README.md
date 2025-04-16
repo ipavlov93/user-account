@@ -1,6 +1,6 @@
 ## Back-end service written in GO
 
-https://github.com/ipavlov93/event-calendar
+https://github.com/ipavlov93/bookly
 
 ### Tests
 
