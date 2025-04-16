@@ -18,16 +18,22 @@ type PostgresAdapter struct {
 func MustNewPostgresAdapter(host string, port int, user, password, dbname string) PostgresAdapter {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
-	connection, err := sqlx.Connect("postgres", psqlInfo)
-	if err != nil {
-		panic(fmt.Sprintf("failed to connect to database, %s", err))
-	}
+
+	// panics due to failed connection to database
+	connection := sqlx.MustConnect("postgres", psqlInfo)
 
 	return PostgresAdapter{sqlxDB: connection}
 }
 
 func (db *PostgresAdapter) GetConnection() *sqlx.DB {
 	return db.sqlxDB
+}
+
+func (db *PostgresAdapter) GraceFullStop() error {
+	if db.sqlxDB == nil {
+		return nil
+	}
+	return db.sqlxDB.Close()
 }
 
 // MustBeginTx tries to begin transaction, panics if begin has failed.
