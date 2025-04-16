@@ -11,7 +11,7 @@ import (
 )
 
 type AuthService interface {
-	SignUp(ctx context.Context, claims *claims.FirebaseAuthClaims) error
+	SignUp(ctx context.Context, claims *claims.FirebaseAuthClaims, roles []claims.Role) error
 	Login(ctx context.Context, claims *claims.FirebaseAuthClaims) error
 	Logout(ctx context.Context, token string) error
 }
