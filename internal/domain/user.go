@@ -1,49 +1,34 @@
 package domain
 
 import (
-	"event-calendar/internal/domain/claims"
 	"fmt"
+	"time"
+
+	"event-calendar/internal/domain/claims"
 )
 
 type User struct {
 	ID          int64
 	FirebaseUID string
 	Roles       []claims.Role
-	// fields set by participant himself or identity/auth provider
-	BusinessName string
-	FirstName    string
-	LastName     string
-	EmailAddress string
-
-	Organization string
-	Description  string
+	Description string
+	CreatedAt   time.Time
 }
 
 func NewUser(
 	firebaseUID string,
-	businessName string,
-	firstName string,
-	lastName string,
-	emailAddress string,
-	organization string,
 	description string,
 	roles ...claims.Role,
 ) User {
 	return User{
-		Roles:        roles,
-		FirebaseUID:  firebaseUID,
-		BusinessName: businessName,
-		FirstName:    firstName,
-		LastName:     lastName,
-		EmailAddress: emailAddress,
-		Organization: organization,
-		Description:  description,
+		Roles:       roles,
+		FirebaseUID: firebaseUID,
+		Description: description,
 	}
 }
 
 func (u User) String() string {
-	return fmt.Sprintf("ID: %d, FirebaseUID: %s, BusinessName: %s, FullName: %s %s, EmailAddress: %s",
-		u.ID, u.FirebaseUID, u.BusinessName, u.FirstName, u.LastName, u.EmailAddress)
+	return fmt.Sprintf("ID: %d, FirebaseUID: %s", u.ID, u.FirebaseUID)
 }
 
 func (u User) Equals(user *User) bool {

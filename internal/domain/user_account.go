@@ -43,6 +43,7 @@ type UserAccount struct {
 	IssuerCode   IssuerCode
 	SubjectUID   string // UID set by Auth Provider
 	EmailAddress string
+	ContactName  string
 }
 
 func NewUserAccount(
@@ -50,12 +51,14 @@ func NewUserAccount(
 	userID int64,
 	subjectUID string,
 	email string,
+	contactName string,
 ) UserAccount {
 	return UserAccount{
 		IssuerCode:   issuerCode,
 		UserID:       userID,
 		SubjectUID:   subjectUID,
 		EmailAddress: email,
+		ContactName:  contactName,
 	}
 }
 

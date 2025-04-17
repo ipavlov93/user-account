@@ -15,10 +15,10 @@ type Meet struct {
 	Link        string
 
 	// many 2 many
-	Participants []Participant
+	Participants []User
 
-	OrganizerID Participant
-	CreatedBy   Participant
+	OrganizerID User
+	CreatedBy   User
 }
 
 // NewMeet init meet with given fields.
@@ -66,21 +66,21 @@ func newMeet(
 		StartedAt:   startedAt,
 		FinishedAt:  finishedAt,
 		Description: description,
-		OrganizerID: Participant{
+		OrganizerID: User{
 			ID: organizerID,
 		},
-		CreatedBy: Participant{
+		CreatedBy: User{
 			ID: creatorID,
 		},
 	}
 
 	// add participants to meet
 	for _, id := range attenderIDs {
-		meet.Participants = append(meet.Participants, Participant{ID: id})
+		meet.Participants = append(meet.Participants, User{ID: id})
 	}
 	meet.Participants = append(
 		meet.Participants,
-		[]Participant{
+		[]User{
 			{ID: organizerID},
 			{ID: creatorID},
 		}...)
@@ -94,7 +94,7 @@ func (m *Meet) AddParticipants(participantIDs []int64) error {
 	}
 
 	if m.Participants == nil {
-		m.Participants = make([]Participant, 0, len(participantIDs))
+		m.Participants = make([]User, 0, len(participantIDs))
 	}
 
 	for _, participant := range participantIDs {
@@ -122,7 +122,7 @@ func (m *Meet) AddParticipant(participantID int64) error {
 	//}
 	//m.Participants[participant.ID] = *participant
 
-	m.Participants = append(m.Participants, Participant{ID: participantID})
+	m.Participants = append(m.Participants, User{ID: participantID})
 	return nil
 }
 

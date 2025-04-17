@@ -4,6 +4,7 @@ import (
 	"event-calendar/internal/domain"
 	"event-calendar/internal/domain/claims"
 	"fmt"
+	"time"
 )
 
 // CreateTestClaims fill all fields based on given value
@@ -22,17 +23,14 @@ func CreateTestClaims(value string) claims.FirebaseAuthClaims {
 	}
 }
 
-// CreateTestUser fill all fields based on given value
+// CreateTestUser fill all fields based on given value.
+// IMPORTANT: set CreatedAt as time.Now().
 func CreateTestUser(id int) domain.User {
 	return domain.User{
-		ID:           int64(id),
-		FirebaseUID:  fmt.Sprint(id),
-		BusinessName: fmt.Sprintf("BusinessName%d", id),
-		FirstName:    fmt.Sprintf("FirstName%d", id),
-		LastName:     fmt.Sprintf("LastName%d", id),
-		EmailAddress: fmt.Sprintf("%d@test.com", id),
-		Organization: fmt.Sprintf("Organization%d", id),
-		Description:  fmt.Sprintf("Description%d", id),
+		ID:          int64(id),
+		FirebaseUID: fmt.Sprint(id),
+		Description: fmt.Sprintf("Description%d", id),
+		CreatedAt:   time.Now(),
 	}
 }
 
@@ -46,15 +44,18 @@ func CreateTestUserAccount(id int) domain.UserAccount {
 	}
 }
 
-// CreateTestParticipant fill all fields based on given value
-func CreateTestParticipant(id int) domain.Participant {
-	return domain.Participant{
+// CreateTestProfile fill all fields based on given value.
+// IMPORTANT: set CreatedAt as time.Now().
+func CreateTestProfile(id int) domain.UserProfile {
+	return domain.UserProfile{
 		ID:             int64(id),
 		FirstName:      fmt.Sprintf("FirstName%d", id),
 		LastName:       fmt.Sprintf("LastName%d", id),
+		BusinessName:   fmt.Sprintf("BusinessName%d", id),
 		ContactEmail:   fmt.Sprintf("%d@test.com", id),
 		Organization:   fmt.Sprintf("Organization%d", id),
 		Description:    fmt.Sprintf("Description%d", id),
 		AvatarFileName: fmt.Sprintf("AvatarFileName%d", id),
+		CreatedAt:      time.Now(),
 	}
 }
