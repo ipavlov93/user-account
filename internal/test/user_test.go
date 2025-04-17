@@ -1,6 +1,7 @@
 package test
 
 import (
+	"event-calendar/internal/domain/claims"
 	"testing"
 
 	"event-calendar/internal/domain"
@@ -10,7 +11,12 @@ import (
 
 func TestNewUser(t *testing.T) {
 	// ARRANGE
+	roles := []claims.Role{
+		claims.RoleUser,
+	}
 	expectedUser := CreateTestUser(1)
+	expectedUser.Roles = roles
+
 	// MANDATORY STEP
 	//set expected userID = 0
 	expectedUser.ID = 0
@@ -20,14 +26,13 @@ func TestNewUser(t *testing.T) {
 		// ACT
 		testUser := domain.NewUser(
 			expectedUser.FirebaseUID,
-			expectedUser.FirstName,
-			expectedUser.LastName,
-			expectedUser.EmailAddress,
-			expectedUser.Organization,
 			expectedUser.Description,
+			roles...,
 		)
 
 		// ASSERT
-		assert.Equal(t, expectedUser, testUser)
+		assert.True(t, testUser.Equals(&expectedUser))
+		// use Equals() to ignore CreatedAt comparison
+		//assert.Equal(t, expectedUser, testUser)
 	})
 }

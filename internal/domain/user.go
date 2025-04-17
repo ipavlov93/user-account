@@ -41,6 +41,10 @@ func (u User) Equals(user *User) bool {
 	if u.FirebaseUID != user.FirebaseUID {
 		return false
 	}
+
+	if len(u.Roles) != len(user.Roles) || !claims.IsGivenRolesPresent(user.Roles, u.Roles) {
+		return false
+	}
 	return true
 }
 
