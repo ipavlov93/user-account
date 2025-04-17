@@ -2,22 +2,16 @@ package smodel
 
 import (
 	"fmt"
-	"net/mail"
+	"time"
 )
 
 type User struct {
-	ID           int64        `json:"id"`
-	FirebaseUID  string       `json:"uuid"`
-	EmailAddress mail.Address `json:"email_address"`
-	// fields set by user himself
-	BusinessName string `json:"businessName"`
-	FirstName    string `json:"firstName"`
-	LastName     string `json:"lastName"`
-	Organization string `json:"organization"`
-	Description  string `json:"description"`
+	ID          int64     `json:"id"`
+	FirebaseUID string    `json:"uuid"`
+	Description string    `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
 }
 
 func (p User) String() string {
-	return fmt.Sprintf("ID: %d, FirebaseUID: %s, BusinessName: %s, FullName: %s %s, EmailAddress: %s",
-		p.ID, p.FirebaseUID, p.BusinessName, p.FirstName, p.LastName, p.EmailAddress)
+	return fmt.Sprintf("ID: %d, FirebaseUID: %s", p.ID, p.FirebaseUID)
 }

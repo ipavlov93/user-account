@@ -1,6 +1,7 @@
 package dmodel
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -13,6 +14,7 @@ type UserAccount struct {
 	IssuerCode   domain.IssuerCode `db:"issuer_code"`
 	SubjectUID   string            `db:"subject_uid"` // UID set by Auth Provider
 	EmailAddress string            `db:"email_address"`
+	ContactName  sql.NullString    `db:"contact_name"`
 	CreatedAt    time.Time         `db:"created_at"`
 }
 
@@ -21,12 +23,17 @@ func NewUserAccount(
 	userID int64,
 	subjectUID string,
 	emailAddress string,
+	contactName string,
 ) UserAccount {
 	return UserAccount{
 		IssuerCode:   issuerCode,
 		UserID:       userID,
 		SubjectUID:   subjectUID,
 		EmailAddress: emailAddress,
+		ContactName: sql.NullString{
+			Valid:  len(contactName) > 0,
+			String: contactName,
+		},
 	}
 }
 

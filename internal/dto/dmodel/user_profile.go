@@ -6,13 +6,14 @@ import (
 	"time"
 )
 
-type Participant struct {
+type UserProfile struct {
 	ID int64 `db:"id"`
 	// fields set by participant himself or auth provider
 	FirstName      string         `db:"first_name"`
 	LastName       string         `db:"last_name"`
+	BusinessName   sql.NullString `db:"business_name"`
 	ContactEmail   string         `db:"contact_email"`
-	UserID         sql.NullInt64  `db:"user_id"`
+	UserID         int64          `db:"user_id"`
 	Organization   string         `db:"organization"`
 	Description    sql.NullString `db:"description"`
 	AvatarFileName sql.NullString `db:"avatar_file_name"`
@@ -22,7 +23,7 @@ type Participant struct {
 	DeletedAt sql.NullTime `db:"deleted_at"`
 }
 
-func (p Participant) String() string {
+func (p UserProfile) String() string {
 	return fmt.Sprintf(
 		"ID: %d, FullName: %s %s, EmailAddress: %s",
 		p.ID,
