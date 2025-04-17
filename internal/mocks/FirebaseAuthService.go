@@ -3,9 +3,11 @@
 package mocks
 
 import (
-	context "context"
+	claims "event-calendar/internal/domain/claims"
 
 	auth "firebase.google.com/go/v4/auth"
+
+	context "context"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -33,17 +35,17 @@ func (_m *FirebaseAuthService) RevokeRefreshTokens(ctx context.Context, idToken 
 	return r0
 }
 
-// SetFirebaseUID provides a mock function with given fields: firebaseUID
-func (_m *FirebaseAuthService) SetFirebaseUID(firebaseUID string) error {
-	ret := _m.Called(firebaseUID)
+// SetRolePrivilegesToClaims provides a mock function with given fields: firebaseUID, roles
+func (_m *FirebaseAuthService) SetRolePrivilegesToClaims(firebaseUID string, roles []claims.Role) error {
+	ret := _m.Called(firebaseUID, roles)
 
 	if len(ret) == 0 {
-		panic("no return value specified for SetFirebaseUID")
+		panic("no return value specified for SetRolePrivilegesToClaims")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string) error); ok {
-		r0 = rf(firebaseUID)
+	if rf, ok := ret.Get(0).(func(string, []claims.Role) error); ok {
+		r0 = rf(firebaseUID, roles)
 	} else {
 		r0 = ret.Error(0)
 	}
