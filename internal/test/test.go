@@ -34,7 +34,8 @@ func CreateTestUser(id int) domain.User {
 	}
 }
 
-// CreateTestUserAccount fill all fields based on given value
+// CreateTestUserAccount fill all fields based on given value.
+// IMPORTANT: ignore UserID.
 func CreateTestUserAccount(id int) domain.UserAccount {
 	return domain.UserAccount{
 		ID:           int64(id),
@@ -44,9 +45,11 @@ func CreateTestUserAccount(id int) domain.UserAccount {
 	}
 }
 
-// CreateTestProfile fill all fields based on given value.
-// IMPORTANT: set CreatedAt as time.Now().
-func CreateTestProfile(id int) domain.UserProfile {
+// CreateTestUserProfile fill all fields based on given value.
+// IMPORTANT:
+// - ignore UserID
+// - set CreatedAt as time.Now().
+func CreateTestUserProfile(id int) domain.UserProfile {
 	return domain.UserProfile{
 		ID:             int64(id),
 		FirstName:      fmt.Sprintf("FirstName%d", id),

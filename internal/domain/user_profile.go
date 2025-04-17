@@ -49,5 +49,8 @@ func (p UserProfile) Equals(profile *UserProfile) bool {
 	if profile == nil {
 		return false
 	}
-	return p.ID != profile.ID
+	if p.ID != profile.ID {
+		return false
+	}
+	return p.UserID == profile.UserID
 }
