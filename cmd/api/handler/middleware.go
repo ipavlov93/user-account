@@ -27,12 +27,17 @@ const (
 type AuthMiddleware struct {
 	firebaseAuthService firebaseauth.FirebaseAuthService
 	logger              *log.Logger
+	providerKeySetURLs  []string // auth provider key set URLs
 }
 
 // NewAuthMiddleware set default logger. Use WithOption() to set custom logger.
-func NewAuthMiddleware(service firebaseauth.FirebaseAuthService) AuthMiddleware {
+func NewAuthMiddleware(
+	service firebaseauth.FirebaseAuthService,
+	providerKeySetURLs []string,
+) AuthMiddleware {
 	return AuthMiddleware{
 		firebaseAuthService: service,
+		providerKeySetURLs:  providerKeySetURLs,
 		logger:              log.New(os.Stdout, loggerPrefix, log.LstdFlags|log.Lshortfile),
 	}
 }
@@ -89,11 +94,7 @@ func (m AuthMiddleware) RequireValidAccessToken(next http.Handler) http.Handler 
 		}
 
 		// Initialize JWK Set client with your JWK Set URLs
-		jwksURLs := []string{
-			"https://www.googleapis.com/oauth2/v3/certs",                   // Google
-			"https://login.microsoftonline.com/common/discovery/v2.0/keys", // Azure
-		}
-		jwks, err := auth.InitializeJWKSetClient(jwksURLs)
+		jwks, err := auth.InitializeJWKSetClient(m.providerKeySetURLs)
 		if err != nil {
 			m.logger.Printf("InitializeJWKSetClient(): %s", err)
 			http.Error(rw,
