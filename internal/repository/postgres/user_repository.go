@@ -66,12 +66,13 @@ func (repo UserRepository) GetUserByFirebaseUID(ctx context.Context, firebaseUID
 	return mapper.UserDtoToUser(userDto), nil
 }
 
+// CreateUser
+// IMPORTANT: ignore given Roles, CreatedAt values.
 func (repo UserRepository) CreateUser(ctx context.Context, user domain.User) (userID int64, err error) {
 	err = repo.db.QueryRowxContext(
 		ctx,
-		`INSERT INTO users (firebase_uid, business_name, first_name, last_name, email_address, organization, description)
-				VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
-		user.FirebaseUID, user.BusinessName, user.FirstName, user.LastName, user.EmailAddress, user.Organization, user.Description,
+		`INSERT INTO users (firebase_uid, description) VALUES ($1, $2) RETURNING id`,
+		user.FirebaseUID, user.Description,
 	).Scan(&userID)
 	if err != nil {
 		if len(err.Error()) > 50 {
