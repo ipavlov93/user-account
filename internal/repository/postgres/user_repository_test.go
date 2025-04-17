@@ -51,8 +51,8 @@ func TestGetUserByID(t *testing.T) {
 
 	// Mock the query
 	rows := sqlmock.NewRows(
-		[]string{"id", "firebase_uid", "business_name", "first_name", "last_name", "email_address", "organization", "description"}).
-		AddRow(expectedUser.ID, expectedUser.FirebaseUID, expectedUser.BusinessName, expectedUser.FirstName, expectedUser.LastName, expectedUser.EmailAddress, expectedUser.Organization, expectedUser.Description)
+		[]string{"id", "firebase_uid", "description"}).
+		AddRow(expectedUser.ID, expectedUser.FirebaseUID, expectedUser.Description)
 
 	mock.ExpectQuery(`(?i)SELECT \* FROM users WHERE id = \$1`).
 		WithArgs(expectedUser.ID).
@@ -64,7 +64,9 @@ func TestGetUserByID(t *testing.T) {
 
 	// Assertions
 	assert.NoError(t, err)
-	assert.Equal(t, expectedUser, user)
+	assert.True(t, user.Equals(&expectedUser))
+	// use Equals() to ignore CreatedAt comparison
+	//assert.Equal(t, expectedUser, user)
 
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
@@ -83,8 +85,8 @@ func TestGetUserByUUID(t *testing.T) {
 
 	// Mock the query
 	rows := sqlmock.NewRows(
-		[]string{"id", "firebase_uid", "business_name", "first_name", "last_name", "email_address", "organization", "description"}).
-		AddRow(expectedUser.ID, expectedUser.FirebaseUID, expectedUser.BusinessName, expectedUser.FirstName, expectedUser.LastName, expectedUser.EmailAddress, expectedUser.Organization, expectedUser.Description)
+		[]string{"id", "firebase_uid", "description"}).
+		AddRow(expectedUser.ID, expectedUser.FirebaseUID, expectedUser.Description)
 
 	mock.ExpectQuery(`(?i)SELECT \* FROM users WHERE firebase_uid = \$1`).
 		WithArgs(expectedUser.FirebaseUID).
@@ -96,7 +98,9 @@ func TestGetUserByUUID(t *testing.T) {
 
 	// Assertions
 	assert.NoError(t, err)
-	assert.Equal(t, expectedUser, user)
+	assert.True(t, user.Equals(&expectedUser))
+	// use Equals() to ignore CreatedAt comparison
+	//assert.Equal(t, expectedUser, user)
 
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
@@ -116,8 +120,8 @@ func TestCreateUser(t *testing.T) {
 	// Define expected behavior for mock
 	rows := sqlmock.NewRows([]string{"id"}).AddRow(1)
 	mock.ExpectQuery(
-		`(?i)INSERT INTO users \(firebase_uid, business_name, first_name, last_name, email_address, organization, description\) VALUES \(\$1, \$2, \$3, \$4, \$5, \$6, \$7\) RETURNING id`).
-		WithArgs(newUser.FirebaseUID, newUser.BusinessName, newUser.FirstName, newUser.LastName, newUser.EmailAddress, newUser.Organization, newUser.Description).
+		`(?i)INSERT INTO users \(firebase_uid, description\) VALUES \(\$1, \$2\) RETURNING id`).
+		WithArgs(newUser.FirebaseUID, newUser.Description).
 		WillReturnRows(rows) // Return ID = 1
 
 	// ACT
