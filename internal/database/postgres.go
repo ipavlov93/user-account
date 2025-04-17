@@ -29,7 +29,7 @@ func (db *PostgresAdapter) GetConnection() *sqlx.DB {
 	return db.sqlxDB
 }
 
-func (db *PostgresAdapter) GraceFullStop() error {
+func (db *PostgresAdapter) CloseConnection() error {
 	if db.sqlxDB == nil {
 		return nil
 	}
