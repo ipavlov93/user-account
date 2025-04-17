@@ -33,9 +33,9 @@ func TestListUserAccountByUserID(t *testing.T) {
 
 	// Mock the query
 	rows := sqlmock.NewRows(
-		[]string{"id", "user_id", "issuer_code", "subject_uid", "email_address"}).
-		AddRow(expectedUserAccount1.ID, expectedUserAccount1.UserID, expectedUserAccount1.IssuerCode, expectedUserAccount1.SubjectUID, expectedUserAccount1.EmailAddress).
-		AddRow(expectedUserAccount2.ID, expectedUserAccount2.UserID, expectedUserAccount2.IssuerCode, expectedUserAccount2.SubjectUID, expectedUserAccount2.EmailAddress)
+		[]string{"id", "user_id", "issuer_code", "subject_uid", "email_address", "contact_name"}).
+		AddRow(expectedUserAccount1.ID, expectedUserAccount1.UserID, expectedUserAccount1.IssuerCode, expectedUserAccount1.SubjectUID, expectedUserAccount1.EmailAddress, expectedUserAccount1.ContactName).
+		AddRow(expectedUserAccount2.ID, expectedUserAccount2.UserID, expectedUserAccount2.IssuerCode, expectedUserAccount2.SubjectUID, expectedUserAccount2.EmailAddress, expectedUserAccount2.ContactName)
 
 	mock.ExpectQuery(`(?i)SELECT \* FROM user_accounts WHERE user_id = \$1`).
 		WithArgs(expectedUserAccount1.UserID).
@@ -70,8 +70,8 @@ func TestCreateUserAccount(t *testing.T) {
 	// Define expected behavior for mock
 	rows := sqlmock.NewRows([]string{"id"}).AddRow(1)
 	mock.ExpectQuery(
-		`(?i)INSERT INTO user_accounts \(user_id, issuer_code, subject_uid, email_address\) VALUES \(\$1, \$2, \$3, \$4\) RETURNING id`).
-		WithArgs(newUserAccount.UserID, newUserAccount.IssuerCode, newUserAccount.SubjectUID, newUserAccount.EmailAddress).
+		`(?i)INSERT INTO user_accounts \(user_id, issuer_code, subject_uid, email_address, contact_name\) VALUES \(\$1, \$2, \$3, \$4, \$5\) RETURNING id`).
+		WithArgs(newUserAccount.UserID, newUserAccount.IssuerCode, newUserAccount.SubjectUID, newUserAccount.EmailAddress, newUserAccount.ContactName).
 		WillReturnRows(rows) // Return ID = 1
 
 	// ACT
@@ -100,8 +100,8 @@ func TestCreateUserAccountIgnoreDuplicate(t *testing.T) {
 	// Define expected behavior for mock
 	rows := sqlmock.NewRows([]string{"id"}).AddRow(1)
 	mock.ExpectQuery(
-		`(?i)INSERT INTO user_accounts \(user_id, issuer_code, subject_uid, email_address\) VALUES \(\$1, \$2, \$3, \$4\) ON CONFLICT DO NOTHING RETURNING id`).
-		WithArgs(newUserAccount.UserID, newUserAccount.IssuerCode, newUserAccount.SubjectUID, newUserAccount.EmailAddress).
+		`(?i)INSERT INTO user_accounts \(user_id, issuer_code, subject_uid, email_address, contact_name\) VALUES \(\$1, \$2, \$3, \$4, \$5\) ON CONFLICT DO NOTHING RETURNING id`).
+		WithArgs(newUserAccount.UserID, newUserAccount.IssuerCode, newUserAccount.SubjectUID, newUserAccount.EmailAddress, newUserAccount.ContactName).
 		WillReturnRows(rows) // Return ID = 1
 
 	// ACT

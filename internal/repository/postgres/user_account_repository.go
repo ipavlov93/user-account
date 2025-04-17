@@ -48,9 +48,9 @@ func (repo UserAccountRepository) CreateUserAccount(ctx context.Context, user do
 func (repo UserAccountRepository) createUserAccountIgnoreDuplicate(ctx context.Context, user domain.UserAccount) (userAccountID int64, err error) {
 	err = repo.dbDriver.QueryRowxContext(
 		ctx,
-		`INSERT INTO user_accounts (user_id, issuer_code, subject_uid, email_address)
-				VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING RETURNING id`,
-		user.UserID, user.IssuerCode, user.SubjectUID, user.EmailAddress,
+		`INSERT INTO user_accounts (user_id, issuer_code, subject_uid, email_address, contact_name)
+				VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING RETURNING id`,
+		user.UserID, user.IssuerCode, user.SubjectUID, user.EmailAddress, user.ContactName,
 	).Scan(&userAccountID)
 	if err != nil {
 		if len(err.Error()) > 50 {
@@ -66,9 +66,9 @@ func (repo UserAccountRepository) createUserAccountIgnoreDuplicate(ctx context.C
 func (repo UserAccountRepository) createUserAccount(ctx context.Context, user domain.UserAccount) (userAccountID int64, err error) {
 	err = repo.dbDriver.QueryRowxContext(
 		ctx,
-		`INSERT INTO user_accounts (user_id, issuer_code, subject_uid, email_address)
-				VALUES ($1, $2, $3, $4) RETURNING id`,
-		user.UserID, user.IssuerCode, user.SubjectUID, user.EmailAddress,
+		`INSERT INTO user_accounts (user_id, issuer_code, subject_uid, email_address, contact_name)
+				VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+		user.UserID, user.IssuerCode, user.SubjectUID, user.EmailAddress, user.ContactName,
 	).Scan(&userAccountID)
 	if err != nil {
 		if len(err.Error()) > 50 {
