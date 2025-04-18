@@ -20,7 +20,7 @@ func TestGetUserProfilesCount(t *testing.T) {
 	sqlxDB := sqlx.NewDb(db, "postgres")
 
 	// Instantiate the repository
-	repo := UserProfileRepository{db: sqlxDB}
+	repo := UserProfileRepositoryPostgres{dbDriver: sqlxDB}
 
 	// Define expected behavior for mock
 	rows := sqlmock.NewRows([]string{"count"}).AddRow(10)
@@ -44,7 +44,7 @@ func TestGetUserProfileByID(t *testing.T) {
 	defer db.Close()
 
 	sqlxDB := sqlx.NewDb(db, "postgres")
-	repo := UserProfileRepository{db: sqlxDB}
+	repo := UserProfileRepositoryPostgres{dbDriver: sqlxDB}
 
 	// Define expected userProfile
 	expectedUserProfile := test.CreateTestUserProfile(1)
@@ -80,7 +80,7 @@ func TestGetUserProfileByUserID(t *testing.T) {
 	defer db.Close()
 
 	sqlxDB := sqlx.NewDb(db, "postgres")
-	repo := UserProfileRepository{db: sqlxDB}
+	repo := UserProfileRepositoryPostgres{dbDriver: sqlxDB}
 
 	// Define expected userProfile
 	user := test.CreateTestUser(1)
@@ -117,7 +117,7 @@ func TestGetUserProfileByUUID(t *testing.T) {
 	defer db.Close()
 
 	sqlxDB := sqlx.NewDb(db, "postgres")
-	repo := UserProfileRepository{db: sqlxDB}
+	repo := UserProfileRepositoryPostgres{dbDriver: sqlxDB}
 
 	// Define expected userProfile
 	user := test.CreateTestUser(1)
@@ -154,7 +154,7 @@ func TestCreateUserProfile(t *testing.T) {
 	defer db.Close()
 
 	sqlxDB := sqlx.NewDb(db, "postgres")
-	repo := UserProfileRepository{db: sqlxDB}
+	repo := UserProfileRepositoryPostgres{dbDriver: sqlxDB}
 
 	// Define expected user and mock response
 	newUser := test.CreateTestUserProfile(1)

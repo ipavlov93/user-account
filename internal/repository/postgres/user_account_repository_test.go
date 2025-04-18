@@ -6,6 +6,7 @@ import (
 
 	"event-calendar/internal/domain"
 	"event-calendar/internal/test"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
