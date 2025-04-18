@@ -13,17 +13,24 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type UserAccountRepository struct {
+type UserAccountRepositoryPostgres struct {
+	// dbDriver adapter abstraction
 	dbDriver sqlx.ExtContext
 }
 
-func NewUserAccountRepository(dbDriver sqlx.ExtContext) UserAccountRepository {
-	return UserAccountRepository{
+func NewUserAccountRepository(dbDriver sqlx.ExtContext) UserAccountRepositoryPostgres {
+	return UserAccountRepositoryPostgres{
 		dbDriver: dbDriver,
 	}
 }
 
-func (repo UserAccountRepository) ListUserAccountsByUserID(ctx context.Context, userID int64) (userAccounts []domain.UserAccount, err error) {
+func (repo UserAccountRepositoryPostgres) WithTx(tx *sqlx.Tx) repository.UserAccountRepository {
+	return UserAccountRepositoryPostgres{
+		dbDriver: tx,
+	}
+}
+
+func (repo UserAccountRepositoryPostgres) ListUserAccountsByUserID(ctx context.Context, userID int64) (userAccounts []domain.UserAccount, err error) {
 	var userAccountDtos []dmodel.UserAccount
 
 	err = sqlx.SelectContext(ctx, repo.dbDriver, &userAccountDtos,
@@ -38,14 +45,14 @@ func (repo UserAccountRepository) ListUserAccountsByUserID(ctx context.Context, 
 	return mapper.DtosToUserAccounts(userAccountDtos), nil
 }
 
-func (repo UserAccountRepository) CreateUserAccount(ctx context.Context, user domain.UserAccount, ignoreDuplicate bool) (userAccountID int64, err error) {
+func (repo UserAccountRepositoryPostgres) CreateUserAccount(ctx context.Context, user domain.UserAccount, ignoreDuplicate bool) (userAccountID int64, err error) {
 	if ignoreDuplicate {
 		return repo.createUserAccountIgnoreDuplicate(ctx, user)
 	}
 	return repo.createUserAccount(ctx, user)
 }
 
-func (repo UserAccountRepository) createUserAccountIgnoreDuplicate(ctx context.Context, user domain.UserAccount) (userAccountID int64, err error) {
+func (repo UserAccountRepositoryPostgres) createUserAccountIgnoreDuplicate(ctx context.Context, user domain.UserAccount) (userAccountID int64, err error) {
 	err = repo.dbDriver.QueryRowxContext(
 		ctx,
 		`INSERT INTO user_accounts (user_id, issuer_code, subject_uid, email_address, contact_name)
@@ -63,7 +70,7 @@ func (repo UserAccountRepository) createUserAccountIgnoreDuplicate(ctx context.C
 	return userAccountID, nil
 }
 
-func (repo UserAccountRepository) createUserAccount(ctx context.Context, user domain.UserAccount) (userAccountID int64, err error) {
+func (repo UserAccountRepositoryPostgres) createUserAccount(ctx context.Context, user domain.UserAccount) (userAccountID int64, err error) {
 	err = repo.dbDriver.QueryRowxContext(
 		ctx,
 		`INSERT INTO user_accounts (user_id, issuer_code, subject_uid, email_address, contact_name)

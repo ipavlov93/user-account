@@ -13,20 +13,26 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type UserRepository struct {
-	// db adapter abstraction
-	db sqlx.ExtContext
+type UserRepositoryPostgres struct {
+	// dbDriver adapter abstraction
+	dbDriver sqlx.ExtContext
 }
 
-func NewUserRepository(dbAdapter sqlx.ExtContext) UserRepository {
-	return UserRepository{
-		db: dbAdapter,
+func NewUserRepository(dbAdapter sqlx.ExtContext) UserRepositoryPostgres {
+	return UserRepositoryPostgres{
+		dbDriver: dbAdapter,
 	}
 }
 
-func (repo UserRepository) GetUsersCount(ctx context.Context) (int64, error) {
+func (repo UserRepositoryPostgres) WithTx(tx *sqlx.Tx) repository.UserRepository {
+	return UserRepositoryPostgres{
+		dbDriver: tx,
+	}
+}
+
+func (repo UserRepositoryPostgres) GetUsersCount(ctx context.Context) (int64, error) {
 	var count int64
-	err := sqlx.GetContext(ctx, repo.db, &count,
+	err := sqlx.GetContext(ctx, repo.dbDriver, &count,
 		`SELECT count(*) FROM users`)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -38,9 +44,9 @@ func (repo UserRepository) GetUsersCount(ctx context.Context) (int64, error) {
 	return count, nil
 }
 
-func (repo UserRepository) GetUserByID(ctx context.Context, id int64) (user domain.User, err error) {
+func (repo UserRepositoryPostgres) GetUserByID(ctx context.Context, id int64) (user domain.User, err error) {
 	var userDto dmodel.User
-	err = sqlx.GetContext(ctx, repo.db, &userDto,
+	err = sqlx.GetContext(ctx, repo.dbDriver, &userDto,
 		`SELECT * FROM users
 				WHERE id = $1`, id)
 	if err != nil {
@@ -52,9 +58,9 @@ func (repo UserRepository) GetUserByID(ctx context.Context, id int64) (user doma
 	return mapper.UserDtoToUser(userDto), nil
 }
 
-func (repo UserRepository) GetUserByFirebaseUID(ctx context.Context, firebaseUID string) (user domain.User, err error) {
+func (repo UserRepositoryPostgres) GetUserByFirebaseUID(ctx context.Context, firebaseUID string) (user domain.User, err error) {
 	var userDto dmodel.User
-	err = sqlx.GetContext(ctx, repo.db, &userDto,
+	err = sqlx.GetContext(ctx, repo.dbDriver, &userDto,
 		`SELECT * FROM users
 				WHERE firebase_uid = $1`, firebaseUID)
 	if err != nil {
@@ -68,8 +74,8 @@ func (repo UserRepository) GetUserByFirebaseUID(ctx context.Context, firebaseUID
 
 // CreateUser
 // IMPORTANT: ignore given Roles, CreatedAt values.
-func (repo UserRepository) CreateUser(ctx context.Context, user domain.User) (userID int64, err error) {
-	err = repo.db.QueryRowxContext(
+func (repo UserRepositoryPostgres) CreateUser(ctx context.Context, user domain.User) (userID int64, err error) {
+	err = repo.dbDriver.QueryRowxContext(
 		ctx,
 		`INSERT INTO users (firebase_uid, description) VALUES ($1, $2) RETURNING id`,
 		user.FirebaseUID, user.Description,

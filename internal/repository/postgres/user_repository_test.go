@@ -2,9 +2,9 @@ package postgres
 
 import (
 	"context"
-	"event-calendar/internal/test"
 	"testing"
 
+	"event-calendar/internal/test"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
@@ -20,7 +20,7 @@ func TestGetUsersCount(t *testing.T) {
 	sqlxDB := sqlx.NewDb(db, "postgres")
 
 	// Instantiate the repository
-	repo := UserRepository{db: sqlxDB}
+	repo := UserRepositoryPostgres{dbDriver: sqlxDB}
 
 	// Define expected behavior for mock
 	rows := sqlmock.NewRows([]string{"count"}).AddRow(10)
@@ -44,7 +44,7 @@ func TestGetUserByID(t *testing.T) {
 	defer db.Close()
 
 	sqlxDB := sqlx.NewDb(db, "postgres")
-	repo := UserRepository{db: sqlxDB}
+	repo := UserRepositoryPostgres{dbDriver: sqlxDB}
 
 	// Define expected user
 	expectedUser := test.CreateTestUser(1)
@@ -78,7 +78,7 @@ func TestGetUserByUUID(t *testing.T) {
 	defer db.Close()
 
 	sqlxDB := sqlx.NewDb(db, "postgres")
-	repo := UserRepository{db: sqlxDB}
+	repo := UserRepositoryPostgres{dbDriver: sqlxDB}
 
 	// Define expected user
 	expectedUser := test.CreateTestUser(1)
@@ -112,7 +112,7 @@ func TestCreateUser(t *testing.T) {
 	defer db.Close()
 
 	sqlxDB := sqlx.NewDb(db, "postgres")
-	repo := UserRepository{db: sqlxDB}
+	repo := UserRepositoryPostgres{dbDriver: sqlxDB}
 
 	// Define expected user and mock response
 	newUser := test.CreateTestUser(1)

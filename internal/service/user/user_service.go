@@ -4,23 +4,25 @@ import (
 	"context"
 
 	"event-calendar/internal/domain"
-	repository "event-calendar/internal/repository/postgres"
-
-	"github.com/jmoiron/sqlx"
+	"event-calendar/internal/repository"
+	"event-calendar/internal/service/user/option"
 )
 
 type UserService struct {
-	dbDriver sqlx.ExtContext
+	userRepository repository.UserRepository
 }
 
-func NewUserService(dbDriver sqlx.ExtContext) *UserService {
+func NewUserService(
+	userRepository repository.UserRepository,
+) *UserService {
 	return &UserService{
-		dbDriver: dbDriver,
+		userRepository: userRepository,
 	}
 }
 
-func (s UserService) GetUserByID(ctx context.Context, id int64) (user domain.User, found bool, err error) {
-	repo := repository.NewUserRepository(s.dbDriver)
+func (s UserService) GetUserByID(ctx context.Context, id int64, options *option.TxOption) (user domain.User, found bool, err error) {
+	// inject tx into repository
+	repo := option.ApplyTx(s.userRepository, options)
 
 	user, err = repo.GetUserByID(ctx, id)
 	if err != nil {
@@ -33,8 +35,9 @@ func (s UserService) GetUserByID(ctx context.Context, id int64) (user domain.Use
 	return user, user.HasValidID(), nil
 }
 
-func (s UserService) GetUserByUUID(ctx context.Context, uuid string) (user domain.User, found bool, err error) {
-	repo := repository.NewUserRepository(s.dbDriver)
+func (s UserService) GetUserByUUID(ctx context.Context, uuid string, options *option.TxOption) (user domain.User, found bool, err error) {
+	// inject tx into repository
+	repo := option.ApplyTx(s.userRepository, options)
 
 	user, err = repo.GetUserByFirebaseUID(ctx, uuid)
 	if err != nil {
@@ -47,8 +50,15 @@ func (s UserService) GetUserByUUID(ctx context.Context, uuid string) (user domai
 	return user, user.HasValidID(), nil
 }
 
-func (s UserService) CreateUser(ctx context.Context, user domain.User) (int64, error) {
-	repo := repository.NewUserRepository(s.dbDriver)
+// CreateUser supplies options as struct instance instead of functional-style WithOption() calls.
+// Pass options as the nil if you want to apply default behaviour.
+func (s UserService) CreateUser(
+	ctx context.Context,
+	user domain.User,
+	options *option.CreateOptions,
+) (int64, error) {
+	// inject tx into repository
+	repo := option.ApplyTx(s.userRepository, &options.TxOption)
 
 	userID, err := repo.CreateUser(ctx, user)
 	if err != nil {

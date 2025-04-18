@@ -10,7 +10,7 @@ import (
 
 func TestNewProfile(t *testing.T) {
 	// ARRANGE
-	expectedProfile := CreateTestProfile(1)
+	expectedProfile := CreateTestUserProfile(1)
 	// MANDATORY STEP
 	//set expected profile ID = 0
 	expectedProfile.ID = 0
