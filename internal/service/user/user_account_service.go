@@ -4,23 +4,30 @@ import (
 	"context"
 
 	"event-calendar/internal/domain"
-	repository "event-calendar/internal/repository/postgres"
-
-	"github.com/jmoiron/sqlx"
+	"event-calendar/internal/repository"
+	"event-calendar/internal/service/user/option"
 )
 
 type UserAccountService struct {
-	dbDriver sqlx.ExtContext
+	userAccountRepository repository.UserAccountRepository
 }
 
-func NewUserAccountService(dbDriver sqlx.ExtContext) *UserAccountService {
+func NewUserAccountService(
+	userAccountRepository repository.UserAccountRepository,
+) *UserAccountService {
 	return &UserAccountService{
-		dbDriver: dbDriver,
+		userAccountRepository: userAccountRepository,
 	}
 }
 
-func (s UserAccountService) ListUserAccountsByUserID(ctx context.Context, userID int64) (userAccountsList []domain.UserAccount, err error) {
-	repo := repository.NewUserAccountRepository(s.dbDriver)
+func (s UserAccountService) ListUserAccountsByUserID(
+	ctx context.Context,
+	userID int64,
+	options *option.TxOption,
+) (userAccountsList []domain.UserAccount, err error) {
+	// inject tx into repository
+	repo := option.ApplyTx(s.userAccountRepository, options)
+
 	userAccountsList, err = repo.ListUserAccountsByUserID(ctx, userID)
 	if err != nil {
 		//if errors.Is(err, repository.ErrNoRows) {
@@ -32,10 +39,22 @@ func (s UserAccountService) ListUserAccountsByUserID(ctx context.Context, userID
 	return userAccountsList, nil
 }
 
-// todo: refactor ignoreDuplicate required parameter to WithOption()
-func (s UserAccountService) CreateUserAccount(ctx context.Context, userAccount domain.UserAccount, ignoreDuplicate bool) (int64, error) {
-	repo := repository.NewUserAccountRepository(s.dbDriver)
-	userID, err := repo.CreateUserAccount(ctx, userAccount, ignoreDuplicate)
+// CreateUserAccount supplies options as struct instance instead of functional-style WithOption() calls.
+// Pass options as the nil if you want to apply default behaviour.
+func (s UserAccountService) CreateUserAccount(
+	ctx context.Context,
+	userAccount domain.UserAccount,
+	options *option.CreateUserAccountOptions,
+) (int64, error) {
+	// inject tx into repository
+	repo := option.ApplyTx(s.userAccountRepository, &options.TxOption)
+
+	allowDuplicates := false
+	if options != nil {
+		allowDuplicates = options.AllowDuplicates
+	}
+
+	userID, err := repo.CreateUserAccount(ctx, userAccount, allowDuplicates)
 	if err != nil {
 		//if errors.Is(err, repository.ErrDuplicate) {
 		//return customError with status code BadRequest
