@@ -5,56 +5,69 @@ import (
 	"strings"
 )
 
-type IssuerCode int
+// issuer is a domain-specific enumeration of known issuers (Auth providers).
+// It is unexported to prevent invalid or inconsistent values being created outside this package.
+// It enforces safe construction via NewIssuerCode() and safe setting value via SetValidIssuer().
+type issuer string
 
 const (
-	UnknownIssuer IssuerCode = 0
-	EmailPassword IssuerCode = 1
-	GoogleIssuer  IssuerCode = 2
-	//AzureIssuer  IssuerCode = 3
+	UnknownIssuer issuer = "UNKNOWN"
+	EmailPassword issuer = "EMAIL_PASSWORD"
+	GoogleIssuer  issuer = "GOOGLE"
 )
 
-var stateIssuerCodeNames = map[IssuerCode]string{
+var stateIssuerCodeNames = map[issuer]string{
 	EmailPassword: "password",
-	GoogleIssuer:  "google.com",
-	//GoogleIssuer: "Google",
+	GoogleIssuer:  "google.com", // "Google",
 }
 
-func (c IssuerCode) String() string {
+func (c issuer) String() string {
 	s, ok := stateIssuerCodeNames[c]
 	if !ok {
-		return fmt.Sprintf("IssuerCode(%d)", c)
+		return fmt.Sprintf("Issuer(%s)", string(c))
 	}
 	return s
 }
 
-func NewIssuerCode(issuer string) IssuerCode {
-	for issuerCode, val := range stateIssuerCodeNames {
-		if strings.EqualFold(val, issuer) {
-			return issuerCode
+// NewIssuerCode creates a valid issuerCode instance.
+// If the input string does not match a known issuer name (not recognized), it returns UnknownIssuer.
+func NewIssuerCode(iss string) issuer {
+	return SetValidIssuer(issuer(iss))
+}
+
+// SetValidIssuer ensures that an issuer value is valid.
+// If issuer's value is absent in the known issuer list, returns UnknownIssuer.
+// Useful when input is already an issuer type but needs validation.
+func SetValidIssuer(iss issuer) issuer {
+	for issuerName, val := range stateIssuerCodeNames {
+		if strings.EqualFold(val, string(iss)) {
+			return issuerName
 		}
 	}
 	return UnknownIssuer
 }
 
+// UserAccount represents the registered (authenticated at least once) user of Bookly application.
 type UserAccount struct {
 	ID           int64
 	UserID       int64
-	IssuerCode   IssuerCode
+	IssuerCode   issuer
 	SubjectUID   string // UID set by Auth Provider
 	EmailAddress string
 	ContactName  string
 }
 
+// NewUserAccount safely constructs a new UserAccount instance,
+// mapping input strings to domain-safe types like issuerCode via constructors.
 func NewUserAccount(
-	issuerCode IssuerCode,
+	issuerCode string,
 	userID int64,
 	subjectUID string,
 	email string,
 	contactName string,
 ) UserAccount {
 	return UserAccount{
-		IssuerCode:   issuerCode,
+		IssuerCode:   NewIssuerCode(issuerCode),
 		UserID:       userID,
 		SubjectUID:   subjectUID,
 		EmailAddress: email,

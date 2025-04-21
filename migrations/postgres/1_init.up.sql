@@ -14,7 +14,7 @@ create table user_accounts
 (
     id            serial primary key,
     user_id       int                     not null,
-    issuer_code   int                     not null,
+    issuer        varchar(50)             not null,
     -- field is null for EmailPassword issuer
     -- todo: create FK to Issuers table
     subject_uid   varchar(100) null,

@@ -39,7 +39,7 @@ func CreateTestUser(id int) domain.User {
 func CreateTestUserAccount(id int) domain.UserAccount {
 	return domain.UserAccount{
 		ID:           int64(id),
-		IssuerCode:   domain.IssuerCode(id),
+		IssuerCode:   domain.NewIssuerCode(fmt.Sprint(id)),
 		SubjectUID:   fmt.Sprintf("SubjectUID%d", id),
 		EmailAddress: fmt.Sprintf("%d@test.com", id),
 	}

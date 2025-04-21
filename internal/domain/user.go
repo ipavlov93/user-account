@@ -7,9 +7,10 @@ import (
 	"event-calendar/internal/domain/claims"
 )
 
+// User represents the registered (authenticated at least once) user of Bookly application.
 type User struct {
 	ID          int64
-	FirebaseUID string
+	FirebaseUID string // UUID of the authenticated user stored in the Firestore
 	Roles       []claims.Role
 	Description string
 	CreatedAt   time.Time
@@ -31,6 +32,8 @@ func (u User) String() string {
 	return fmt.Sprintf("ID: %d, FirebaseUID: %s", u.ID, u.FirebaseUID)
 }
 
+// Equals compare critical user fields with given user.
+// Users will be considered as distinct if scope of roles isn't identical.
 func (u User) Equals(user *User) bool {
 	if user == nil {
 		return false
