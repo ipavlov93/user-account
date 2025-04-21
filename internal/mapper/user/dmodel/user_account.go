@@ -12,7 +12,7 @@ func UserAccountToDto(userAccount domain.UserAccount) dmodel.UserAccount {
 	return dmodel.UserAccount{
 		ID:           userAccount.ID,
 		UserID:       userAccount.UserID,
-		IssuerCode:   userAccount.IssuerCode,
+		IssuerCode:   userAccount.IssuerCode.String(),
 		SubjectUID:   userAccount.SubjectUID,
 		EmailAddress: userAccount.EmailAddress,
 		ContactName: sql.NullString{
@@ -26,7 +26,7 @@ func DtoToUserAccount(userAccount dmodel.UserAccount) domain.UserAccount {
 	return domain.UserAccount{
 		ID:           userAccount.ID,
 		UserID:       userAccount.UserID,
-		IssuerCode:   userAccount.IssuerCode,
+		IssuerCode:   domain.NewIssuerCode(userAccount.IssuerCode),
 		SubjectUID:   userAccount.SubjectUID,
 		EmailAddress: userAccount.EmailAddress,
 		ContactName:  userAccount.ContactName.String,
@@ -39,7 +39,7 @@ func DtosToUserAccounts(userAccounts []dmodel.UserAccount) []domain.UserAccount 
 		result = append(result, domain.UserAccount{
 			ID:           userAccount.ID,
 			UserID:       userAccount.UserID,
-			IssuerCode:   userAccount.IssuerCode,
+			IssuerCode:   domain.NewIssuerCode(userAccount.IssuerCode),
 			SubjectUID:   userAccount.SubjectUID,
 			EmailAddress: userAccount.EmailAddress,
 			ContactName:  userAccount.ContactName.String,
