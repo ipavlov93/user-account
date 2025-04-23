@@ -3,8 +3,7 @@
 package mocks
 
 import (
-	claims "event-calendar/internal/domain/claims"
-
+	claims "event-calendar/internal/domain/role"
 	auth "firebase.google.com/go/v4/auth"
 
 	context "context"
