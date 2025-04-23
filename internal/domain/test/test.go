@@ -8,6 +8,8 @@ import (
 	"event-calendar/internal/domain/claims"
 )
 
+// file test.go contains helper function that is used in tests.
+
 // CreateTestClaims fill all fields based on given value
 func CreateTestClaims(value string) claims.FirebaseAuthClaims {
 	return claims.FirebaseAuthClaims{
