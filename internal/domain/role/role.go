@@ -5,25 +5,25 @@ import "slices"
 type Role string
 
 const (
-	RoleSuperAdmin Role = "SUPER_ADMIN"
-	RoleAdmin      Role = "ADMIN"
-	RoleUser       Role = "USER"
-	RoleAnonymous  Role = "ANONYMOUS"
-	UnknownRole    Role = "UNKNOWN"
+	SuperAdmin  Role = "SUPER_ADMIN"
+	Admin       Role = "ADMIN"
+	User        Role = "USER"
+	Anonymous   Role = "ANONYMOUS"
+	UnknownRole Role = "UNKNOWN"
 )
 
 // NewRole creates a valid issuerCode instance.
 // If the input string does not match a known issuer name (not recognized), it returns UnknownIssuer.
 func NewRole(roleName string) Role {
 	switch Role(roleName) {
-	case RoleSuperAdmin:
-		return RoleSuperAdmin
-	case RoleAdmin:
-		return RoleAdmin
-	case RoleUser:
-		return RoleUser
-	case RoleAnonymous:
-		return RoleAnonymous
+	case SuperAdmin:
+		return SuperAdmin
+	case Admin:
+		return Admin
+	case User:
+		return User
+	case Anonymous:
+		return Anonymous
 	}
 	return UnknownRole
 }

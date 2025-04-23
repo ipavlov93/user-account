@@ -12,7 +12,7 @@ import (
 func TestNewUser(t *testing.T) {
 	// ARRANGE
 	roles := []role.Role{
-		role.RoleUser,
+		role.User,
 	}
 	expectedUser := CreateTestUser(1)
 	expectedUser.Roles = roles
