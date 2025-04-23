@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"event-calendar/internal/domain"
+	"event-calendar/internal/option"
 	"event-calendar/internal/repository"
-	"event-calendar/internal/service/user/option"
 )
 
 type UserService struct {
@@ -20,31 +20,47 @@ func NewUserService(
 	}
 }
 
-func (s UserService) GetUserByID(ctx context.Context, id int64, options *option.TxOption) (user domain.User, found bool, err error) {
+func (s UserService) GetUserByID(
+	ctx context.Context,
+	ID int64,
+	options *option.TxOption,
+) (
+	emptyObj domain.User,
+	found bool,
+	err error,
+) {
 	// inject tx into repository
 	repo := option.ApplyTx(s.userRepository, options)
 
-	user, err = repo.GetUserByID(ctx, id)
+	user, err := repo.GetUserByID(ctx, ID)
 	if err != nil {
 		//if errors.Is(err, repository.ErrNoRows) {
 		//return customError with status code NotFound
 		//}
-		return user, false, err
+		return emptyObj, false, err
 	}
 
 	return user, user.HasValidID(), nil
 }
 
-func (s UserService) GetUserByUUID(ctx context.Context, uuid string, options *option.TxOption) (user domain.User, found bool, err error) {
+func (s UserService) GetUserByUUID(
+	ctx context.Context,
+	uuid string,
+	options *option.TxOption,
+) (
+	emptyObj domain.User,
+	found bool,
+	err error,
+) {
 	// inject tx into repository
 	repo := option.ApplyTx(s.userRepository, options)
 
-	user, err = repo.GetUserByFirebaseUID(ctx, uuid)
+	user, err := repo.GetUserByFirebaseUID(ctx, uuid)
 	if err != nil {
 		//if errors.Is(err, repository.ErrNoRows) {
 		//return customError with status code NotFound
 		//}
-		return user, false, err
+		return emptyObj, false, err
 	}
 
 	return user, user.HasValidID(), nil
@@ -55,10 +71,10 @@ func (s UserService) GetUserByUUID(ctx context.Context, uuid string, options *op
 func (s UserService) CreateUser(
 	ctx context.Context,
 	user domain.User,
-	options *option.CreateOptions,
+	options *option.TxOption,
 ) (int64, error) {
 	// inject tx into repository
-	repo := option.ApplyTx(s.userRepository, &options.TxOption)
+	repo := option.ApplyTx(s.userRepository, options)
 
 	userID, err := repo.CreateUser(ctx, user)
 	if err != nil {
