@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"time"
 
-	"event-calendar/internal/domain/claims"
+	"event-calendar/internal/domain/role"
 )
 
 // User represents the registered (authenticated at least once) user of Bookly application.
 type User struct {
 	ID          int64
 	FirebaseUID string // UUID of the authenticated user stored in the Firestore
-	Roles       []claims.Role
+	Roles       []role.Role
 	Description string
 	CreatedAt   time.Time
 }
@@ -19,7 +19,7 @@ type User struct {
 func NewUser(
 	firebaseUID string,
 	description string,
-	roles ...claims.Role,
+	roles ...role.Role,
 ) User {
 	return User{
 		Roles:       roles,
@@ -45,7 +45,7 @@ func (u User) Equals(user *User) bool {
 		return false
 	}
 
-	if len(u.Roles) != len(user.Roles) || !claims.IsGivenRolesPresent(user.Roles, u.Roles) {
+	if len(u.Roles) != len(user.Roles) || !role.IsGivenRolesPresent(user.Roles, u.Roles) {
 		return false
 	}
 	return true
