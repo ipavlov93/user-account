@@ -44,21 +44,21 @@ func (repo UserProfileRepositoryPostgres) GetUserProfilesCount(ctx context.Conte
 	return count, nil
 }
 
-func (repo UserProfileRepositoryPostgres) GetUserProfileByID(ctx context.Context, id int64) (emptyObj domain.UserProfile, err error) {
+func (repo UserProfileRepositoryPostgres) GetUserProfileByID(ctx context.Context, id int64) (obj domain.UserProfile, err error) {
 	var userProfileDto dmodel.UserProfile
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userProfileDto,
 		`SELECT * FROM user_profiles
 				WHERE id = $1`, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return emptyObj, repository.ErrNoRows
+			return domain.UserProfile{}, repository.ErrNoRows
 		}
-		return emptyObj, err
+		return domain.UserProfile{}, err
 	}
 	return mapper.ProfileDtoToProfile(userProfileDto), nil
 }
 
-func (repo UserProfileRepositoryPostgres) GetUserProfileByUserID(ctx context.Context, userID int64) (emptyObj domain.UserProfile, err error) {
+func (repo UserProfileRepositoryPostgres) GetUserProfileByUserID(ctx context.Context, userID int64) (obj domain.UserProfile, err error) {
 	var userProfileDto dmodel.UserProfile
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userProfileDto,
 		`SELECT * FROM user
@@ -66,14 +66,14 @@ func (repo UserProfileRepositoryPostgres) GetUserProfileByUserID(ctx context.Con
 				WHERE user.id = $1`, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return emptyObj, repository.ErrNoRows
+			return domain.UserProfile{}, repository.ErrNoRows
 		}
-		return emptyObj, err
+		return domain.UserProfile{}, err
 	}
 	return mapper.ProfileDtoToProfile(userProfileDto), nil
 }
 
-func (repo UserProfileRepositoryPostgres) GetUserProfileByFirebaseUID(ctx context.Context, firebaseUID string) (emptyObj domain.UserProfile, err error) {
+func (repo UserProfileRepositoryPostgres) GetUserProfileByFirebaseUID(ctx context.Context, firebaseUID string) (obj domain.UserProfile, err error) {
 	var userProfileDto dmodel.UserProfile
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userProfileDto,
 		`SELECT * FROM user
@@ -81,9 +81,9 @@ func (repo UserProfileRepositoryPostgres) GetUserProfileByFirebaseUID(ctx contex
 				WHERE user.firebase_uid = $1`, firebaseUID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return emptyObj, repository.ErrNoRows
+			return domain.UserProfile{}, repository.ErrNoRows
 		}
-		return emptyObj, err
+		return domain.UserProfile{}, err
 	}
 	return mapper.ProfileDtoToProfile(userProfileDto), nil
 }

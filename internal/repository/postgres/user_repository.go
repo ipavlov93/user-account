@@ -44,30 +44,30 @@ func (repo UserRepositoryPostgres) GetUsersCount(ctx context.Context) (int64, er
 	return count, nil
 }
 
-func (repo UserRepositoryPostgres) GetUserByID(ctx context.Context, id int64) (emptyObj domain.User, err error) {
+func (repo UserRepositoryPostgres) GetUserByID(ctx context.Context, id int64) (obj domain.User, err error) {
 	var userDto dmodel.User
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userDto,
 		`SELECT * FROM users
 				WHERE id = $1`, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return emptyObj, repository.ErrNoRows
+			return domain.User{}, repository.ErrNoRows
 		}
-		return emptyObj, err
+		return domain.User{}, err
 	}
 	return mapper.UserDtoToUser(userDto), nil
 }
 
-func (repo UserRepositoryPostgres) GetUserByFirebaseUID(ctx context.Context, firebaseUID string) (emptyObj domain.User, err error) {
+func (repo UserRepositoryPostgres) GetUserByFirebaseUID(ctx context.Context, firebaseUID string) (obj domain.User, err error) {
 	var userDto dmodel.User
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userDto,
 		`SELECT * FROM users
 				WHERE firebase_uid = $1`, firebaseUID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return emptyObj, repository.ErrNoRows
+			return domain.User{}, repository.ErrNoRows
 		}
-		return emptyObj, err
+		return domain.User{}, err
 	}
 	return mapper.UserDtoToUser(userDto), nil
 }

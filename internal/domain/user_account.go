@@ -65,14 +65,17 @@ func NewUserAccount(
 	subjectUID string,
 	email string,
 	contactName string,
-) UserAccount {
+) (UserAccount, error) {
+	if userID < 1 {
+		return UserAccount{}, fmt.Errorf("invalid user id %d", userID)
+	}
 	return UserAccount{
 		Issuer:       NewIssuer(issuer),
 		UserID:       userID,
 		SubjectUID:   subjectUID,
 		EmailAddress: email,
 		ContactName:  contactName,
-	}
+	}, nil
 }
 
 func (u UserAccount) String() string {

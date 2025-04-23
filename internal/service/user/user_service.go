@@ -25,7 +25,7 @@ func (s UserService) GetUserByID(
 	ID int64,
 	options *option.TxOption,
 ) (
-	emptyObj domain.User,
+	obj domain.User,
 	found bool,
 	err error,
 ) {
@@ -37,7 +37,7 @@ func (s UserService) GetUserByID(
 		//if errors.Is(err, repository.ErrNoRows) {
 		//return customError with status code NotFound
 		//}
-		return emptyObj, false, err
+		return domain.User{}, false, err
 	}
 
 	return user, user.HasValidID(), nil
@@ -48,7 +48,7 @@ func (s UserService) GetUserByUUID(
 	uuid string,
 	options *option.TxOption,
 ) (
-	emptyObj domain.User,
+	obj domain.User,
 	found bool,
 	err error,
 ) {
@@ -60,7 +60,7 @@ func (s UserService) GetUserByUUID(
 		//if errors.Is(err, repository.ErrNoRows) {
 		//return customError with status code NotFound
 		//}
-		return emptyObj, false, err
+		return domain.User{}, false, err
 	}
 
 	return user, user.HasValidID(), nil
