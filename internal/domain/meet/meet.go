@@ -1,6 +1,7 @@
-package domain
+package meet
 
 import (
+	"event-calendar/internal/domain"
 	"fmt"
 	"time"
 )
@@ -8,17 +9,17 @@ import (
 type Meet struct {
 	ID          int64
 	Title       string
-	Status      MeetStatus
+	Status      meetStatus
 	StartedAt   time.Time
 	FinishedAt  time.Time
 	Description string
 	Link        string
 
 	// many 2 many
-	Participants []User
+	Participants []domain.User
 
-	OrganizerID User
-	CreatedBy   User
+	OrganizerID domain.User
+	CreatedBy   domain.User
 }
 
 // NewMeet init meet with given fields.
@@ -52,7 +53,7 @@ func NewScheduledMeet(
 // newMeet init meet with given fields.
 func newMeet(
 	title string,
-	status MeetStatus,
+	status meetStatus,
 	startedAt time.Time,
 	finishedAt time.Time,
 	description string,
@@ -66,21 +67,21 @@ func newMeet(
 		StartedAt:   startedAt,
 		FinishedAt:  finishedAt,
 		Description: description,
-		OrganizerID: User{
+		OrganizerID: domain.User{
 			ID: organizerID,
 		},
-		CreatedBy: User{
+		CreatedBy: domain.User{
 			ID: creatorID,
 		},
 	}
 
 	// add participants to meet
 	for _, id := range attenderIDs {
-		meet.Participants = append(meet.Participants, User{ID: id})
+		meet.Participants = append(meet.Participants, domain.User{ID: id})
 	}
 	meet.Participants = append(
 		meet.Participants,
-		[]User{
+		[]domain.User{
 			{ID: organizerID},
 			{ID: creatorID},
 		}...)
@@ -94,7 +95,7 @@ func (m *Meet) AddParticipants(participantIDs []int64) error {
 	}
 
 	if m.Participants == nil {
-		m.Participants = make([]User, 0, len(participantIDs))
+		m.Participants = make([]domain.User, 0, len(participantIDs))
 	}
 
 	for _, participant := range participantIDs {
@@ -122,7 +123,7 @@ func (m *Meet) AddParticipant(participantID int64) error {
 	//}
 	//m.Participants[participant.ID] = *participant
 
-	m.Participants = append(m.Participants, User{ID: participantID})
+	m.Participants = append(m.Participants, domain.User{ID: participantID})
 	return nil
 }
 
