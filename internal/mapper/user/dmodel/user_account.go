@@ -12,7 +12,7 @@ func UserAccountToDto(userAccount domain.UserAccount) dmodel.UserAccount {
 	return dmodel.UserAccount{
 		ID:           userAccount.ID,
 		UserID:       userAccount.UserID,
-		IssuerCode:   userAccount.IssuerCode.String(),
+		Issuer:       userAccount.Issuer.String(),
 		SubjectUID:   userAccount.SubjectUID,
 		EmailAddress: userAccount.EmailAddress,
 		ContactName: sql.NullString{
@@ -26,20 +26,21 @@ func DtoToUserAccount(userAccount dmodel.UserAccount) domain.UserAccount {
 	return domain.UserAccount{
 		ID:           userAccount.ID,
 		UserID:       userAccount.UserID,
-		IssuerCode:   domain.NewIssuerCode(userAccount.IssuerCode),
+		Issuer:       domain.NewIssuer(userAccount.Issuer),
 		SubjectUID:   userAccount.SubjectUID,
 		EmailAddress: userAccount.EmailAddress,
 		ContactName:  userAccount.ContactName.String,
 	}
 }
 
-func DtosToUserAccounts(userAccounts []dmodel.UserAccount) []domain.UserAccount {
+// MapUserAccounts maps []dmodel.User to []domain.User
+func MapUserAccounts(userAccounts []dmodel.UserAccount) []domain.UserAccount {
 	result := make([]domain.UserAccount, 0, len(userAccounts))
 	for _, userAccount := range userAccounts {
 		result = append(result, domain.UserAccount{
 			ID:           userAccount.ID,
 			UserID:       userAccount.UserID,
-			IssuerCode:   domain.NewIssuerCode(userAccount.IssuerCode),
+			Issuer:       domain.NewIssuer(userAccount.Issuer),
 			SubjectUID:   userAccount.SubjectUID,
 			EmailAddress: userAccount.EmailAddress,
 			ContactName:  userAccount.ContactName.String,
