@@ -21,7 +21,6 @@ type IdentityClaims struct {
 type Identities struct {
 	Email  IdentitiesStorage `json:"email"`
 	Google IdentitiesStorage `json:"google.com"`
-	//Microsoft IdentitiesStorage `json:"microsoft.com"`
 }
 
 type IdentitiesStorage []string
