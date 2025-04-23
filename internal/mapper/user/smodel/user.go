@@ -25,7 +25,7 @@ func UserDtoToUser(user smodel.User) domain.User {
 	}
 }
 
-// MapDto maps Dmodel.UserID to Smodel.UserID
+// MapDto maps Dmodel.User to Smodel.User
 func MapDto(user dmodel.User) smodel.User {
 	return smodel.User{
 		ID:          user.ID,
