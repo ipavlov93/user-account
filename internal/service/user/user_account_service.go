@@ -49,8 +49,12 @@ func (s UserAccountService) CreateUserAccount(
 	userAccount domain.UserAccount,
 	options *option.CreateUserAccountOptions,
 ) (int64, error) {
+	repo := s.userAccountRepository
+
 	// inject tx into repository
-	repo := option.ApplyTx(s.userAccountRepository, &options.TxOption)
+	if options != nil {
+		repo = option.ApplyTx(s.userAccountRepository, &options.TxOption)
+	}
 
 	allowDuplicates := false
 	if options != nil {
