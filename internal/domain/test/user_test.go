@@ -1,18 +1,18 @@
 package test
 
 import (
-	"event-calendar/internal/domain/claims"
 	"testing"
 
 	"event-calendar/internal/domain"
+	"event-calendar/internal/domain/role"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewUser(t *testing.T) {
 	// ARRANGE
-	roles := []claims.Role{
-		claims.RoleUser,
+	roles := []role.Role{
+		role.User,
 	}
 	expectedUser := CreateTestUser(1)
 	expectedUser.Roles = roles

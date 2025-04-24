@@ -16,7 +16,8 @@ type UserProfile struct {
 	Organization   string
 	Description    string
 	AvatarFileName string
-	CreatedAt      time.Time
+
+	CreatedAt time.Time
 }
 
 func NewUserProfile(

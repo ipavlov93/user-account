@@ -4,7 +4,8 @@ import (
 	"context"
 	"time"
 
-	"event-calendar/internal/domain/claims"
+	"event-calendar/internal/domain/role"
+
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
 	"google.golang.org/api/option"
@@ -15,10 +16,10 @@ type FirebaseAuthService struct {
 }
 
 func NewAuthService(firebaseCredentialFilePath string) FirebaseAuthService {
-	opt := option.WithCredentialsFile(firebaseCredentialFilePath)
+	option := option.WithCredentialsFile(firebaseCredentialFilePath)
 
 	ctx := context.Background()
-	firebaseApp, err := firebase.NewApp(ctx, nil, opt)
+	firebaseApp, err := firebase.NewApp(ctx, nil, option)
 	if err != nil {
 		panic(err)
 	}
@@ -93,10 +94,9 @@ func (s FirebaseAuthService) RevokeRefreshTokens(ctx context.Context, idToken st
 // It sets "processed" custom claim to mark user in Firestore as synced with back-end.
 // The new custom claims will propagate to the user's ID token the next time a new one is issued.
 // Note: this operation always overwrites the user's existing custom claims.
-func (s FirebaseAuthService) SetRolePrivilegesToClaims(firebaseUID string, roles []claims.Role) error {
+func (s FirebaseAuthService) SetRolePrivilegesToClaims(firebaseUID string, roles []role.Role) error {
 	customClaims := map[string]any{
-		"roles":     roles,
-		"processed": true,
+		"roles": roles,
 	}
 
 	return s.firebaseAuthService.SetCustomUserClaims(context.Background(), firebaseUID, customClaims)

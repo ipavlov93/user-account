@@ -9,7 +9,7 @@ import (
 type UserAccount struct {
 	ID           int64          `db:"id"`
 	UserID       int64          `db:"user_id"`
-	IssuerCode   string         `db:"issuer"`
+	Issuer       string         `db:"issuer"`
 	SubjectUID   string         `db:"subject_uid"` // UID set by Auth Provider
 	EmailAddress string         `db:"email_address"`
 	ContactName  sql.NullString `db:"contact_name"`
@@ -17,14 +17,14 @@ type UserAccount struct {
 }
 
 func NewUserAccount(
-	issuerCode string,
+	issuer string,
 	userID int64,
 	subjectUID string,
 	emailAddress string,
 	contactName string,
 ) UserAccount {
 	return UserAccount{
-		IssuerCode:   issuerCode,
+		Issuer:       issuer,
 		UserID:       userID,
 		SubjectUID:   subjectUID,
 		EmailAddress: emailAddress,

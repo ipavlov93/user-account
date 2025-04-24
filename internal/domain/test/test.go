@@ -1,11 +1,14 @@
 package test
 
 import (
-	"event-calendar/internal/domain"
-	"event-calendar/internal/domain/claims"
 	"fmt"
 	"time"
+
+	"event-calendar/internal/domain"
+	"event-calendar/internal/domain/claims"
 )
+
+// file test.go contains helper function that is used in tests.
 
 // CreateTestClaims fill all fields based on given value
 func CreateTestClaims(value string) claims.FirebaseAuthClaims {
@@ -39,7 +42,7 @@ func CreateTestUser(id int) domain.User {
 func CreateTestUserAccount(id int) domain.UserAccount {
 	return domain.UserAccount{
 		ID:           int64(id),
-		IssuerCode:   domain.NewIssuerCode(fmt.Sprint(id)),
+		Issuer:       domain.NewIssuer(fmt.Sprint(id)),
 		SubjectUID:   fmt.Sprintf("SubjectUID%d", id),
 		EmailAddress: fmt.Sprintf("%d@test.com", id),
 	}

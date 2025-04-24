@@ -4,7 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"event-calendar/internal/test"
+	"event-calendar/internal/domain/test"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"

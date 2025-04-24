@@ -32,7 +32,7 @@ func UserDtoToUser(user dmodel.User) domain.User {
 	}
 }
 
-// MapUserDtos maps Smodel.UserID to Dmodel.UserID
+// MapUserDtos maps Smodel.User to Dmodel.User
 // IMPORTANT: ignore field Roles, CreatedAt.
 func MapUserDtos(user smodel.User) dmodel.User {
 	return dmodel.User{

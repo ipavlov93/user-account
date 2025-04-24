@@ -5,13 +5,14 @@ import (
 
 	"event-calendar/internal/domain"
 	"event-calendar/internal/domain/claims"
-	"event-calendar/internal/service/user/option"
+	"event-calendar/internal/domain/role"
+	"event-calendar/internal/option"
 
 	"firebase.google.com/go/v4/auth"
 )
 
 type AuthService interface {
-	SignUp(ctx context.Context, claims *claims.FirebaseAuthClaims, roles []claims.Role) error
+	SignUp(ctx context.Context, claims *claims.FirebaseAuthClaims, roles []role.Role) error
 	Login(ctx context.Context, claims *claims.FirebaseAuthClaims) error
 	Logout(ctx context.Context, token string) error
 }
@@ -19,11 +20,11 @@ type AuthService interface {
 type FirebaseAuthService interface {
 	VerifyIDToken(idToken string) (token *auth.Token, err error)
 	RevokeRefreshTokens(ctx context.Context, idToken string) error
-	SetRolePrivilegesToClaims(firebaseUID string, roles []claims.Role) error
+	SetRolePrivilegesToClaims(firebaseUID string, roles []role.Role) error
 }
 
 type UserService interface {
-	CreateUser(ctx context.Context, user domain.User, options *option.CreateOptions) (int64, error)
+	CreateUser(ctx context.Context, user domain.User, options *option.TxOption) (int64, error)
 	GetUserByID(ctx context.Context, id int64, options *option.TxOption) (user domain.User, found bool, err error)
 	GetUserByUUID(ctx context.Context, uuid string, options *option.TxOption) (user domain.User, found bool, err error)
 }

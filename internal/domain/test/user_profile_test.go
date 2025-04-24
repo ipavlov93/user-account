@@ -33,6 +33,8 @@ func TestNewProfile(t *testing.T) {
 		)
 
 		// ASSERT
-		assert.Equal(t, expectedProfile, testProfile)
+		assert.True(t, testProfile.Equals(&expectedProfile))
+		// use Equals() to ignore CreatedAt comparison
+		//assert.Equal(t, expectedProfile, testProfile)
 	})
 }

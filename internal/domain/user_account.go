@@ -7,7 +7,7 @@ import (
 
 // issuer is a domain-specific enumeration of known issuers (Auth providers).
 // It is unexported to prevent invalid or inconsistent values being created outside this package.
-// It enforces safe construction via NewIssuerCode() and safe setting value via SetValidIssuer().
+// It enforces safe construction via NewIssuer() and provides safe setter SetValidIssuer().
 type issuer string
 
 const (
@@ -16,22 +16,22 @@ const (
 	GoogleIssuer  issuer = "GOOGLE"
 )
 
-var stateIssuerCodeNames = map[issuer]string{
+var stateIssuers = map[issuer]string{
 	EmailPassword: "password",
 	GoogleIssuer:  "google.com", // "Google",
 }
 
 func (c issuer) String() string {
-	s, ok := stateIssuerCodeNames[c]
+	s, ok := stateIssuers[c]
 	if !ok {
 		return fmt.Sprintf("Issuer(%s)", string(c))
 	}
 	return s
 }
 
-// NewIssuerCode creates a valid issuerCode instance.
+// NewIssuer creates a valid issuer instance.
 // If the input string does not match a known issuer name (not recognized), it returns UnknownIssuer.
-func NewIssuerCode(iss string) issuer {
+func NewIssuer(iss string) issuer {
 	return SetValidIssuer(issuer(iss))
 }
 
@@ -39,7 +39,7 @@ func NewIssuerCode(iss string) issuer {
 // If issuer's value is absent in the known issuer list, returns UnknownIssuer.
 // Useful when input is already an issuer type but needs validation.
 func SetValidIssuer(iss issuer) issuer {
-	for issuerName, val := range stateIssuerCodeNames {
+	for issuerName, val := range stateIssuers {
 		if strings.EqualFold(val, string(iss)) {
 			return issuerName
 		}
@@ -51,28 +51,31 @@ func SetValidIssuer(iss issuer) issuer {
 type UserAccount struct {
 	ID           int64
 	UserID       int64
-	IssuerCode   issuer
+	Issuer       issuer
 	SubjectUID   string // UID set by Auth Provider
 	EmailAddress string
 	ContactName  string
 }
 
 // NewUserAccount safely constructs a new UserAccount instance,
-// mapping input strings to domain-safe types like issuerCode via constructors.
+// mapping input strings to domain-safe types like issuer via constructors.
 func NewUserAccount(
-	issuerCode string,
+	issuer string,
 	userID int64,
 	subjectUID string,
 	email string,
 	contactName string,
-) UserAccount {
+) (UserAccount, error) {
+	if userID < 1 {
+		return UserAccount{}, fmt.Errorf("invalid user id %d", userID)
+	}
 	return UserAccount{
-		IssuerCode:   NewIssuerCode(issuerCode),
+		Issuer:       NewIssuer(issuer),
 		UserID:       userID,
 		SubjectUID:   subjectUID,
 		EmailAddress: email,
 		ContactName:  contactName,
-	}
+	}, nil
 }
 
 func (u UserAccount) String() string {
