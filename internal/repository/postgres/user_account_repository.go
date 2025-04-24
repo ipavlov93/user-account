@@ -31,9 +31,9 @@ func (repo UserAccountRepositoryPostgres) WithTx(tx *sqlx.Tx) repository.UserAcc
 }
 
 func (repo UserAccountRepositoryPostgres) ListUserAccountsByUserID(ctx context.Context, userID int64) (userAccounts []domain.UserAccount, err error) {
-	var userAccountDto []dmodel.UserAccount
+	var accounts []dmodel.UserAccount
 
-	err = sqlx.SelectContext(ctx, repo.dbDriver, &userAccountDto,
+	err = sqlx.SelectContext(ctx, repo.dbDriver, &accounts,
 		`SELECT * FROM user_accounts
 				WHERE user_id = $1`, userID)
 	if err != nil {
@@ -42,7 +42,7 @@ func (repo UserAccountRepositoryPostgres) ListUserAccountsByUserID(ctx context.C
 		}
 		return nil, err
 	}
-	return mapper.MapUserAccounts(userAccountDto), nil
+	return mapper.MapUserAccounts(accounts), nil
 }
 
 func (repo UserAccountRepositoryPostgres) CreateUserAccount(ctx context.Context, user domain.UserAccount, ignoreDuplicate bool) (userAccountID int64, err error) {

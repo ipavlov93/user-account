@@ -25,13 +25,13 @@ func (s UserAccountService) ListUserAccountsByUserID(
 	userID int64,
 	options *option.TxOption,
 ) (
-	userAccountsList []domain.UserAccount,
+	userAccounts []domain.UserAccount,
 	err error,
 ) {
 	// inject tx into repository
 	repo := option.ApplyTx(s.userAccountRepository, options)
 
-	userAccountsList, err = repo.ListUserAccountsByUserID(ctx, userID)
+	userAccounts, err = repo.ListUserAccountsByUserID(ctx, userID)
 	if err != nil {
 		//if errors.Is(err, repository.ErrNoRows) {
 		//return customError with status code NotFound
@@ -39,7 +39,7 @@ func (s UserAccountService) ListUserAccountsByUserID(
 		return nil, err
 	}
 
-	return userAccountsList, nil
+	return userAccounts, nil
 }
 
 // CreateUserAccount supplies options as struct instance instead of functional-style WithOption() calls.

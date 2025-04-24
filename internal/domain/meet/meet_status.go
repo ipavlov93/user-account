@@ -6,8 +6,7 @@ import (
 
 // meetStatus is a domain-specific enumeration.
 // It is unexported to prevent invalid or inconsistent values being created outside this package.
-// It enforces safe construction via NewMeetStatus() and safe status transition using Transition().
-// safe transition logic with explicit
+// It enforces safe construction via NewMeetStatus() and safe status transition logic using Transition().
 type meetStatus string
 
 const (
