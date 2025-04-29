@@ -1,3 +1,6 @@
+// Package postgres is part of repository.
+// Package provides implementations of persistence layer interfaces.
+// It includes interactions with PostgreSQL for user account storage, modification and retrieval.
 package postgres
 
 import (
@@ -15,6 +18,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// UserAccountRepositoryPostgres implements UserAccountRepository using sqlx.
+// It provides methods to manage user accounts in PostgreSQL.
 type UserAccountRepositoryPostgres struct {
 	// dbDriver abstraction
 	dbDriver sqlx.ExtContext
@@ -43,6 +48,8 @@ func (repo *UserAccountRepositoryPostgres) WithTx(tx *sqlx.Tx) repository.UserAc
 	}
 }
 
+// ListUserAccountsByUserID retrieves a user list by user ID.
+// Returns errs.ErrUserAccountNotFound if no matching record exists.
 func (repo *UserAccountRepositoryPostgres) ListUserAccountsByUserID(ctx context.Context, userID int64) (userAccounts []domain.UserAccount, err error) {
 	var accounts []dmodel.UserAccount
 	err = sqlx.SelectContext(ctx, repo.dbDriver, &accounts,
@@ -57,8 +64,10 @@ func (repo *UserAccountRepositoryPostgres) ListUserAccountsByUserID(ctx context.
 	return mapper.MapUserAccounts(accounts), nil
 }
 
-// CreateUserAccount accept ignoreConflict option to ignore duplicate conflict.
+// CreateUserAccount inserts a new user account into the database.
+// It accepts ignoreConflict option to ignore duplicate conflict.
 // If ignoreConflict is true then no error would be returned after try to create duplicate.
+// IMPORTANT: ignore given CreatedAt value.
 func (repo *UserAccountRepositoryPostgres) CreateUserAccount(ctx context.Context, user domain.UserAccount, ignoreConflict bool) (userAccountID int64, err error) {
 	if ignoreConflict {
 		return repo.createUserAccountIgnoreConflict(ctx, user)

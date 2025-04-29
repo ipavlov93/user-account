@@ -1,3 +1,6 @@
+// Package postgres is part of repository.
+// Package provides implementations of persistence layer interfaces.
+// It includes interactions with PostgreSQL for user profile storage, modification and retrieval.
 package postgres
 
 import (
@@ -15,6 +18,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// UserProfileRepositoryPostgres implements UserProfileRepository using sqlx.
+// It provides methods to manage user profiles in PostgreSQL.
 type UserProfileRepositoryPostgres struct {
 	// dbDriver abstraction
 	dbDriver sqlx.ExtContext
@@ -43,13 +48,14 @@ func (repo *UserProfileRepositoryPostgres) WithTx(tx *sqlx.Tx) repository.UserPr
 	}
 }
 
+// GetUserProfilesCount retrieves a user profile total count.
 func (repo *UserProfileRepositoryPostgres) GetUserProfilesCount(ctx context.Context) (int64, error) {
 	var count int64
 	err := sqlx.GetContext(ctx, repo.dbDriver, &count,
 		`SELECT count(*) FROM user_profiles`)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return 0, errs.ErrDBNoRows
+			return 0, nil
 		}
 		return 0, errs.ErrDB.WithInfo(err.Error())
 	}
@@ -57,6 +63,8 @@ func (repo *UserProfileRepositoryPostgres) GetUserProfilesCount(ctx context.Cont
 	return count, nil
 }
 
+// GetUserProfileByID retrieves a user profile by its unique ID.
+// Returns errs.ErrUserProfileNotFound if no matching record exists.
 func (repo *UserProfileRepositoryPostgres) GetUserProfileByID(ctx context.Context, id int64) (obj domain.UserProfile, err error) {
 	var userProfileDto dmodel.UserProfile
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userProfileDto,
@@ -71,6 +79,8 @@ func (repo *UserProfileRepositoryPostgres) GetUserProfileByID(ctx context.Contex
 	return mapper.ProfileDtoToProfile(userProfileDto), nil
 }
 
+// GetUserProfileByUserID retrieves a user profile by user ID.
+// Returns errs.ErrUserProfileNotFound if no matching record exists.
 func (repo *UserProfileRepositoryPostgres) GetUserProfileByUserID(ctx context.Context, userID int64) (obj domain.UserProfile, err error) {
 	var userProfileDto dmodel.UserProfile
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userProfileDto,
@@ -86,6 +96,8 @@ func (repo *UserProfileRepositoryPostgres) GetUserProfileByUserID(ctx context.Co
 	return mapper.ProfileDtoToProfile(userProfileDto), nil
 }
 
+// GetUserProfileByFirebaseUID retrieves a user profile by user UID.
+// Returns errs.ErrUserProfileNotFound if no matching record exists.
 func (repo *UserProfileRepositoryPostgres) GetUserProfileByFirebaseUID(ctx context.Context, firebaseUID string) (obj domain.UserProfile, err error) {
 	var userProfileDto dmodel.UserProfile
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userProfileDto,
@@ -101,7 +113,8 @@ func (repo *UserProfileRepositoryPostgres) GetUserProfileByFirebaseUID(ctx conte
 	return mapper.ProfileDtoToProfile(userProfileDto), nil
 }
 
-// CreateUserProfile
+// CreateUserProfile inserts a new user profile into the database.
+// Returns an error if the operation fails or the user ID already exists.
 // IMPORTANT: ignore given CreatedAt value.
 func (repo *UserProfileRepositoryPostgres) CreateUserProfile(ctx context.Context, user domain.UserProfile) (userID int64, err error) {
 	err = repo.dbDriver.QueryRowxContext(

@@ -1,3 +1,6 @@
+// Package postgres is part of repository.
+// Package provides implementations of persistence layer interfaces.
+// It includes interactions with PostgreSQL for user storage, modification and retrieval.
 package postgres
 
 import (
@@ -15,6 +18,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// UserRepositoryPostgres implements UserRepository using sqlx.
+// It provides methods to manage users in PostgreSQL.
 type UserRepositoryPostgres struct {
 	// dbDriver abstraction
 	dbDriver sqlx.ExtContext
@@ -43,13 +48,14 @@ func (repo *UserRepositoryPostgres) WithTx(tx *sqlx.Tx) repository.UserRepositor
 	}
 }
 
+// GetUsersCount retrieves a user total count.
 func (repo *UserRepositoryPostgres) GetUsersCount(ctx context.Context) (int64, error) {
 	var count int64
 	err := sqlx.GetContext(ctx, repo.dbDriver, &count,
 		`SELECT count(*) FROM users`)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return 0, errs.ErrDBNoRows
+			return 0, nil
 		}
 		return 0, errs.ErrDB.WithInfo(err.Error())
 	}
@@ -57,6 +63,8 @@ func (repo *UserRepositoryPostgres) GetUsersCount(ctx context.Context) (int64, e
 	return count, nil
 }
 
+// GetUserByID retrieves a user by its unique ID.
+// Returns errs.ErrUserNotFound if no matching record exists.
 func (repo *UserRepositoryPostgres) GetUserByID(ctx context.Context, id int64) (obj domain.User, err error) {
 	var userDto dmodel.User
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userDto,
@@ -71,6 +79,8 @@ func (repo *UserRepositoryPostgres) GetUserByID(ctx context.Context, id int64) (
 	return mapper.UserDtoToUser(userDto), nil
 }
 
+// GetUserByFirebaseUID retrieves a user by its unique Firebase UID.
+// Returns errs.ErrUserNotFound if no matching record exists.
 func (repo *UserRepositoryPostgres) GetUserByFirebaseUID(ctx context.Context, firebaseUID string) (obj domain.User, err error) {
 	var userDto dmodel.User
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userDto,
@@ -85,7 +95,8 @@ func (repo *UserRepositoryPostgres) GetUserByFirebaseUID(ctx context.Context, fi
 	return mapper.UserDtoToUser(userDto), nil
 }
 
-// CreateUser
+// CreateUser inserts a new user into the database.
+// Returns an error if the operation fails or the user ID already exists.
 // IMPORTANT: ignore given Roles, CreatedAt values.
 func (repo *UserRepositoryPostgres) CreateUser(ctx context.Context, user domain.User) (userID int64, err error) {
 	err = repo.dbDriver.QueryRowxContext(
