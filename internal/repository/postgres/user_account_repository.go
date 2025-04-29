@@ -1,3 +1,6 @@
+// Package postgres is part of repository.
+// Package provides implementations of persistence layer interfaces.
+// It includes interactions with PostgreSQL for user account storage, modification and retrieval.
 package postgres
 
 import (
@@ -7,52 +10,72 @@ import (
 
 	"event-calendar/internal/domain"
 	"event-calendar/internal/dto/dmodel"
+	errs "event-calendar/internal/error"
+	"event-calendar/internal/logger"
 	mapper "event-calendar/internal/mapper/user/dmodel"
 	"event-calendar/internal/repository"
 
 	"github.com/jmoiron/sqlx"
 )
 
+// UserAccountRepositoryPostgres implements UserAccountRepository using sqlx.
+// It provides methods to manage user accounts in PostgreSQL.
 type UserAccountRepositoryPostgres struct {
-	// dbDriver adapter abstraction
+	// dbDriver abstraction
 	dbDriver sqlx.ExtContext
+	logger   logger.Logger
 }
 
-func NewUserAccountRepository(dbDriver sqlx.ExtContext) UserAccountRepositoryPostgres {
-	return UserAccountRepositoryPostgres{
+func NewUserAccountRepository(dbDriver sqlx.ExtContext) *UserAccountRepositoryPostgres {
+	return &UserAccountRepositoryPostgres{
 		dbDriver: dbDriver,
 	}
 }
 
-func (repo UserAccountRepositoryPostgres) WithTx(tx *sqlx.Tx) repository.UserAccountRepository {
-	return UserAccountRepositoryPostgres{
+// WithLogger sets the logger and returns the *UserAccountRepositoryPostgres
+func (repo *UserAccountRepositoryPostgres) WithLogger(logger logger.Logger) *UserAccountRepositoryPostgres {
+	if logger != nil {
+		repo.logger = logger
+	}
+	return repo
+}
+
+// WithTx returns new copy of UserAccountRepository with new dbDriver.
+func (repo *UserAccountRepositoryPostgres) WithTx(tx *sqlx.Tx) repository.UserAccountRepository {
+	return &UserAccountRepositoryPostgres{
 		dbDriver: tx,
+		logger:   repo.logger,
 	}
 }
 
-func (repo UserAccountRepositoryPostgres) ListUserAccountsByUserID(ctx context.Context, userID int64) (userAccounts []domain.UserAccount, err error) {
+// ListUserAccountsByUserID retrieves a user list by user ID.
+// Returns errs.ErrUserAccountNotFound if no matching record exists.
+func (repo *UserAccountRepositoryPostgres) ListUserAccountsByUserID(ctx context.Context, userID int64) (userAccounts []domain.UserAccount, err error) {
 	var accounts []dmodel.UserAccount
-
 	err = sqlx.SelectContext(ctx, repo.dbDriver, &accounts,
 		`SELECT * FROM user_accounts
 				WHERE user_id = $1`, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, repository.ErrNoRows
+			return nil, errs.ErrUserAccountNotFound.WithInfo(err.Error())
 		}
-		return nil, err
+		return nil, errs.ErrDB.WithInfo(err.Error())
 	}
 	return mapper.MapUserAccounts(accounts), nil
 }
 
-func (repo UserAccountRepositoryPostgres) CreateUserAccount(ctx context.Context, user domain.UserAccount, ignoreDuplicate bool) (userAccountID int64, err error) {
-	if ignoreDuplicate {
-		return repo.createUserAccountIgnoreDuplicate(ctx, user)
+// CreateUserAccount inserts a new user account into the database.
+// It accepts ignoreConflict option to ignore duplicate conflict.
+// If ignoreConflict is true then no error would be returned after try to create duplicate.
+// IMPORTANT: ignore given CreatedAt value.
+func (repo *UserAccountRepositoryPostgres) CreateUserAccount(ctx context.Context, user domain.UserAccount, ignoreConflict bool) (userAccountID int64, err error) {
+	if ignoreConflict {
+		return repo.createUserAccountIgnoreConflict(ctx, user)
 	}
 	return repo.createUserAccount(ctx, user)
 }
 
-func (repo UserAccountRepositoryPostgres) createUserAccountIgnoreDuplicate(ctx context.Context, user domain.UserAccount) (userAccountID int64, err error) {
+func (repo *UserAccountRepositoryPostgres) createUserAccountIgnoreConflict(ctx context.Context, user domain.UserAccount) (userAccountID int64, err error) {
 	err = repo.dbDriver.QueryRowxContext(
 		ctx,
 		`INSERT INTO user_accounts (user_id, issuer, subject_uid, email_address, contact_name)
@@ -60,17 +83,12 @@ func (repo UserAccountRepositoryPostgres) createUserAccountIgnoreDuplicate(ctx c
 		user.UserID, user.Issuer, user.SubjectUID, user.EmailAddress, user.ContactName,
 	).Scan(&userAccountID)
 	if err != nil {
-		if len(err.Error()) > 50 {
-			if err.Error()[:50] == pqDuplicateErr {
-				return 0, repository.ErrDuplicate
-			}
-		}
-		return 0, err
+		return 0, errs.ErrDB.WithInfo(err.Error())
 	}
 	return userAccountID, nil
 }
 
-func (repo UserAccountRepositoryPostgres) createUserAccount(ctx context.Context, user domain.UserAccount) (userAccountID int64, err error) {
+func (repo *UserAccountRepositoryPostgres) createUserAccount(ctx context.Context, user domain.UserAccount) (userAccountID int64, err error) {
 	err = repo.dbDriver.QueryRowxContext(
 		ctx,
 		`INSERT INTO user_accounts (user_id, issuer, subject_uid, email_address, contact_name)
@@ -80,10 +98,10 @@ func (repo UserAccountRepositoryPostgres) createUserAccount(ctx context.Context,
 	if err != nil {
 		if len(err.Error()) > 50 {
 			if err.Error()[:50] == pqDuplicateErr {
-				return 0, repository.ErrDuplicate
+				return 0, errs.ErrDBConstraint.WithInfo(err.Error())
 			}
 		}
-		return 0, err
+		return 0, errs.ErrDB.WithInfo(err.Error())
 	}
 	return userAccountID, nil
 }

@@ -1,6 +1,6 @@
 ## Back-end service written in GO
 
-https://github.com/ipavlov93/bookly
+https://github.com/ipavlov93/user-account is prototype of back-end service.
 
 ### Tests
 

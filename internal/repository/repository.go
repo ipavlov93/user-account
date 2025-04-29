@@ -1,3 +1,6 @@
+// Package repository provides contracts of persistence layer.
+// Interfaces includes methods for storage, modification and retrieval.
+// It also provides ability to perform these operations within transaction.
 package repository
 
 import (
@@ -8,10 +11,13 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// WithTx provides ability to run SQL queries within database transaction.
 type WithTx[T any] interface {
+	// WithTx returns new copy of T with tx.
 	WithTx(tx *sqlx.Tx) T
 }
 
+// UserRepository defines the contract for user persistence operations.
 type UserRepository interface {
 	WithTx[UserRepository]
 	CreateUser(ctx context.Context, user domain.User) (int64, error)
@@ -20,6 +26,7 @@ type UserRepository interface {
 	GetUserByFirebaseUID(ctx context.Context, uuid string) (domain.User, error)
 }
 
+// UserProfileRepository defines the contract for user profile persistence operations.
 type UserProfileRepository interface {
 	WithTx[UserProfileRepository]
 	CreateUserProfile(ctx context.Context, user domain.UserProfile) (int64, error)
@@ -29,8 +36,9 @@ type UserProfileRepository interface {
 	GetUserProfileByFirebaseUID(ctx context.Context, firebaseUID string) (user domain.UserProfile, err error)
 }
 
+// UserAccountRepository defines the contract for user account persistence operations.
 type UserAccountRepository interface {
 	WithTx[UserAccountRepository]
-	CreateUserAccount(ctx context.Context, user domain.UserAccount, ignoreDuplicate bool) (userAccountID int64, err error)
+	CreateUserAccount(ctx context.Context, user domain.UserAccount, ignoreConflict bool) (userAccountID int64, err error)
 	ListUserAccountsByUserID(ctx context.Context, userID int64) (userAccounts []domain.UserAccount, err error)
 }
