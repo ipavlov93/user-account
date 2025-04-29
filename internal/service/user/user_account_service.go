@@ -56,16 +56,14 @@ func (s UserAccountService) CreateUserAccount(
 		repo = option.ApplyTx(s.userAccountRepository, &options.TxOption)
 	}
 
-	allowDuplicates := false
+	ignoreConflicts := true
+	// If ignoreConflict is true then no error would be returned after try to create duplicate.
 	if options != nil {
-		allowDuplicates = options.AllowDuplicates
+		ignoreConflicts = options.IgnoreConflict
 	}
 
-	userID, err := repo.CreateUserAccount(ctx, userAccount, allowDuplicates)
+	userID, err := repo.CreateUserAccount(ctx, userAccount, ignoreConflicts)
 	if err != nil {
-		//if errors.Is(err, repository.ErrDuplicate) {
-		//return customError with status code BadRequest
-		//}
 		return 0, err
 	}
 

@@ -9,6 +9,7 @@ import (
 )
 
 type WithTx[T any] interface {
+	// WithTx returns new copy of T with new tx.
 	WithTx(tx *sqlx.Tx) T
 }
 
@@ -31,6 +32,6 @@ type UserProfileRepository interface {
 
 type UserAccountRepository interface {
 	WithTx[UserAccountRepository]
-	CreateUserAccount(ctx context.Context, user domain.UserAccount, ignoreDuplicate bool) (userAccountID int64, err error)
+	CreateUserAccount(ctx context.Context, user domain.UserAccount, ignoreConflict bool) (userAccountID int64, err error)
 	ListUserAccountsByUserID(ctx context.Context, userID int64) (userAccounts []domain.UserAccount, err error)
 }

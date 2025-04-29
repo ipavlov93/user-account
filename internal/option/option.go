@@ -23,5 +23,5 @@ type CreateOptions struct {
 
 type CreateUserAccountOptions struct {
 	TxOption
-	AllowDuplicates bool
+	IgnoreConflict bool
 }

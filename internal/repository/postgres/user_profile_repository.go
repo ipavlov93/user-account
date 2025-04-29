@@ -7,6 +7,8 @@ import (
 
 	"event-calendar/internal/domain"
 	"event-calendar/internal/dto/dmodel"
+	errs "event-calendar/internal/error"
+	"event-calendar/internal/logger"
 	mapper "event-calendar/internal/mapper/user/dmodel"
 	"event-calendar/internal/repository"
 
@@ -14,51 +16,62 @@ import (
 )
 
 type UserProfileRepositoryPostgres struct {
-	// dbDriver adapter abstraction
+	// dbDriver abstraction
 	dbDriver sqlx.ExtContext
+	logger   logger.Logger
 }
 
-func NewUserProfileRepository(dbAdapter sqlx.ExtContext) UserProfileRepositoryPostgres {
-	return UserProfileRepositoryPostgres{
-		dbDriver: dbAdapter,
+func NewUserProfileRepository(dbDriver sqlx.ExtContext) *UserProfileRepositoryPostgres {
+	return &UserProfileRepositoryPostgres{
+		dbDriver: dbDriver,
 	}
 }
 
-func (repo UserProfileRepositoryPostgres) WithTx(tx *sqlx.Tx) repository.UserProfileRepository {
-	return UserProfileRepositoryPostgres{
+// WithLogger sets the logger and returns the *UserProfileRepositoryPostgres
+func (repo *UserProfileRepositoryPostgres) WithLogger(logger logger.Logger) *UserProfileRepositoryPostgres {
+	if logger != nil {
+		repo.logger = logger
+	}
+	return repo
+}
+
+// WithTx returns new copy of UserAccountRepository with new dbDriver.
+func (repo *UserProfileRepositoryPostgres) WithTx(tx *sqlx.Tx) repository.UserProfileRepository {
+	return &UserProfileRepositoryPostgres{
 		dbDriver: tx,
+		logger:   repo.logger,
 	}
 }
 
-func (repo UserProfileRepositoryPostgres) GetUserProfilesCount(ctx context.Context) (int64, error) {
+func (repo *UserProfileRepositoryPostgres) GetUserProfilesCount(ctx context.Context) (int64, error) {
 	var count int64
 	err := sqlx.GetContext(ctx, repo.dbDriver, &count,
 		`SELECT count(*) FROM user_profiles`)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return 0, repository.ErrNoRows
+			return 0, errs.ErrDBNoRows
 		}
-		return 0, err
+		return 0, errs.ErrDB.WithInfo(err.Error())
 	}
 
 	return count, nil
 }
 
-func (repo UserProfileRepositoryPostgres) GetUserProfileByID(ctx context.Context, id int64) (obj domain.UserProfile, err error) {
+func (repo *UserProfileRepositoryPostgres) GetUserProfileByID(ctx context.Context, id int64) (obj domain.UserProfile, err error) {
 	var userProfileDto dmodel.UserProfile
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userProfileDto,
 		`SELECT * FROM user_profiles
 				WHERE id = $1`, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return domain.UserProfile{}, repository.ErrNoRows
+			return domain.UserProfile{}, errs.ErrUserProfileNotFound.WithInfo(err.Error())
 		}
-		return domain.UserProfile{}, err
+		return domain.UserProfile{}, errs.ErrDB.WithInfo(err.Error())
 	}
 	return mapper.ProfileDtoToProfile(userProfileDto), nil
 }
 
-func (repo UserProfileRepositoryPostgres) GetUserProfileByUserID(ctx context.Context, userID int64) (obj domain.UserProfile, err error) {
+func (repo *UserProfileRepositoryPostgres) GetUserProfileByUserID(ctx context.Context, userID int64) (obj domain.UserProfile, err error) {
 	var userProfileDto dmodel.UserProfile
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userProfileDto,
 		`SELECT * FROM user
@@ -66,14 +79,14 @@ func (repo UserProfileRepositoryPostgres) GetUserProfileByUserID(ctx context.Con
 				WHERE user.id = $1`, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return domain.UserProfile{}, repository.ErrNoRows
+			return domain.UserProfile{}, errs.ErrUserProfileNotFound.WithInfo(err.Error())
 		}
-		return domain.UserProfile{}, err
+		return domain.UserProfile{}, errs.ErrDB.WithInfo(err.Error())
 	}
 	return mapper.ProfileDtoToProfile(userProfileDto), nil
 }
 
-func (repo UserProfileRepositoryPostgres) GetUserProfileByFirebaseUID(ctx context.Context, firebaseUID string) (obj domain.UserProfile, err error) {
+func (repo *UserProfileRepositoryPostgres) GetUserProfileByFirebaseUID(ctx context.Context, firebaseUID string) (obj domain.UserProfile, err error) {
 	var userProfileDto dmodel.UserProfile
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userProfileDto,
 		`SELECT * FROM user
@@ -81,16 +94,16 @@ func (repo UserProfileRepositoryPostgres) GetUserProfileByFirebaseUID(ctx contex
 				WHERE user.firebase_uid = $1`, firebaseUID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return domain.UserProfile{}, repository.ErrNoRows
+			return domain.UserProfile{}, errs.ErrUserProfileNotFound.WithInfo(err.Error())
 		}
-		return domain.UserProfile{}, err
+		return domain.UserProfile{}, errs.ErrDB.WithInfo(err.Error())
 	}
 	return mapper.ProfileDtoToProfile(userProfileDto), nil
 }
 
 // CreateUserProfile
 // IMPORTANT: ignore given CreatedAt value.
-func (repo UserProfileRepositoryPostgres) CreateUserProfile(ctx context.Context, user domain.UserProfile) (userID int64, err error) {
+func (repo *UserProfileRepositoryPostgres) CreateUserProfile(ctx context.Context, user domain.UserProfile) (userID int64, err error) {
 	err = repo.dbDriver.QueryRowxContext(
 		ctx,
 		`INSERT INTO user_profiles (first_name, last_name, user_id, business_name, contact_email, organization, avatar_file_name, description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
@@ -99,10 +112,10 @@ func (repo UserProfileRepositoryPostgres) CreateUserProfile(ctx context.Context,
 	if err != nil {
 		if len(err.Error()) > 50 {
 			if err.Error()[:50] == pqDuplicateErr {
-				return 0, repository.ErrDuplicate
+				return 0, errs.ErrDBConstraint.WithInfo(err.Error())
 			}
 		}
-		return 0, err
+		return 0, errs.ErrDB.WithInfo(err.Error())
 	}
 	return userID, nil
 }
