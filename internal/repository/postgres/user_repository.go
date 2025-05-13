@@ -7,14 +7,13 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
-
 	"event-calendar/internal/domain"
 	"event-calendar/internal/dto/dmodel"
 	errs "event-calendar/internal/error"
 	"event-calendar/internal/logger"
 	mapper "event-calendar/internal/mapper/user/dmodel"
 	"event-calendar/internal/repository"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -108,10 +107,12 @@ func (repo *UserRepositoryPostgres) CreateUser(ctx context.Context, user domain.
 		user.FirebaseUUID, user.Description,
 	).Scan(&userID)
 	if err != nil {
+		errorInfo := fmt.Sprintf("repository.CreateUser: %v", err)
+
 		if len(err.Error()) > 50 && err.Error()[:50] == pqDuplicateErr {
-			return 0, errs.ErrUserExists.WithInfo(err.Error())
+			return 0, errs.ErrUserExists.WithInfo(errorInfo)
 		}
-		return 0, err
+		return 0, errs.ErrDB.WithInfo(errorInfo)
 	}
 	return userID, nil
 }

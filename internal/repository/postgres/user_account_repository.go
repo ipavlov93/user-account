@@ -7,14 +7,13 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
-
 	"event-calendar/internal/domain"
 	"event-calendar/internal/dto/dmodel"
 	errs "event-calendar/internal/error"
 	"event-calendar/internal/logger"
 	mapper "event-calendar/internal/mapper/user/dmodel"
 	"event-calendar/internal/repository"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -58,7 +57,7 @@ func (repo *UserAccountRepositoryPostgres) ListUserAccountsByUserID(ctx context.
 				WHERE user_id = $1`, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errs.ErrUserAccountNotFound.WithInfo(fmt.Sprintf("repository.ListUserAccountsByUserID: user accoounts not found for userID=%d", userID))
+			return nil, errs.ErrUserAccountNotFound.WithInfo(fmt.Sprintf("repository.ListUserAccountsByUserID: user accounts not found for userID=%d", userID))
 		}
 		return nil, errs.ErrDB.WithInfo(fmt.Sprintf("repository.ListUserAccountsByUserID: %v", err))
 	}
