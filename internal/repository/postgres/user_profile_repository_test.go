@@ -130,7 +130,7 @@ func TestGetUserProfileByUUID(t *testing.T) {
 		[]string{"id", "first_name", "last_name", "user_id", "business_name", "contact_email", "organization", "avatar_file_name", "description"}).
 		AddRow(expectedUserProfile.ID, expectedUserProfile.FirstName, expectedUserProfile.LastName, expectedUserProfile.UserID, expectedUserProfile.BusinessName, expectedUserProfile.ContactEmail, expectedUserProfile.Organization, expectedUserProfile.AvatarFileName, expectedUserProfile.Description)
 
-	mock.ExpectQuery(`(?i)SELECT \* FROM user LEFT JOIN user_profiles ON user.id = user_profiles.user_id WHERE user.firebase_uid = \$1`).
+	mock.ExpectQuery(`(?i)SELECT \* FROM user LEFT JOIN user_profiles ON user.id = user_profiles.user_id WHERE user.firebase_uuid = \$1`).
 		WithArgs(user.FirebaseUUID).
 		WillReturnRows(rows)
 

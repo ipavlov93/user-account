@@ -2,9 +2,8 @@ package postgres
 
 import (
 	"context"
-	"testing"
-
 	"event-calendar/internal/domain/test"
+	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jmoiron/sqlx"
@@ -52,8 +51,8 @@ func TestGetUserByID(t *testing.T) {
 
 	// Mock the query
 	rows := sqlmock.NewRows(
-		[]string{"id", "firebase_uid", "description"}).
-		AddRow(expectedUser.ID, expectedUser.FirebaseUID, expectedUser.Description)
+		[]string{"id", "firebase_uuid", "description"}).
+		AddRow(expectedUser.ID, expectedUser.FirebaseUUID, expectedUser.Description)
 
 	mock.ExpectQuery(`(?i)SELECT \* FROM users WHERE id = \$1`).
 		WithArgs(expectedUser.ID).
@@ -86,16 +85,16 @@ func TestGetUserByUUID(t *testing.T) {
 
 	// Mock the query
 	rows := sqlmock.NewRows(
-		[]string{"id", "firebase_uid", "description"}).
-		AddRow(expectedUser.ID, expectedUser.FirebaseUID, expectedUser.Description)
+		[]string{"id", "firebase_uuid", "description"}).
+		AddRow(expectedUser.ID, expectedUser.FirebaseUUID, expectedUser.Description)
 
-	mock.ExpectQuery(`(?i)SELECT \* FROM users WHERE firebase_uid = \$1`).
-		WithArgs(expectedUser.FirebaseUID).
+	mock.ExpectQuery(`(?i)SELECT \* FROM users WHERE firebase_uuid = \$1`).
+		WithArgs(expectedUser.FirebaseUUID).
 		WillReturnRows(rows)
 
 	// ACT
 	ctx := context.Background()
-	user, err := repo.GetUserByFirebaseUID(ctx, expectedUser.FirebaseUID)
+	user, err := repo.GetUserByFirebaseUUID(ctx, expectedUser.FirebaseUUID)
 
 	// Assertions
 	assert.NoError(t, err)
@@ -121,8 +120,8 @@ func TestCreateUser(t *testing.T) {
 	// Define expected behavior for mock
 	rows := sqlmock.NewRows([]string{"id"}).AddRow(1)
 	mock.ExpectQuery(
-		`(?i)INSERT INTO users \(firebase_uid, description\) VALUES \(\$1, \$2\) RETURNING id`).
-		WithArgs(newUser.FirebaseUID, newUser.Description).
+		`(?i)INSERT INTO users \(firebase_uuid, description\) VALUES \(\$1, \$2\) RETURNING id`).
+		WithArgs(newUser.FirebaseUUID, newUser.Description).
 		WillReturnRows(rows) // Return ID = 1
 
 	// ACT
