@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"event-calendar/internal/domain"
 	"event-calendar/internal/dto/dmodel"
@@ -57,9 +58,9 @@ func (repo *UserAccountRepositoryPostgres) ListUserAccountsByUserID(ctx context.
 				WHERE user_id = $1`, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errs.ErrUserAccountNotFound.WithInfo(err.Error())
+			return nil, errs.ErrUserAccountNotFound.WithInfo(fmt.Sprintf("repository.ListUserAccountsByUserID: user accounts not found for userID=%d", userID))
 		}
-		return nil, errs.ErrDB.WithInfo(err.Error())
+		return nil, errs.ErrDB.WithInfo(fmt.Sprintf("repository.ListUserAccountsByUserID: %v", err))
 	}
 	return mapper.MapUserAccounts(accounts), nil
 }
@@ -83,7 +84,7 @@ func (repo *UserAccountRepositoryPostgres) createUserAccountIgnoreConflict(ctx c
 		user.UserID, user.Issuer, user.SubjectUID, user.EmailAddress, user.ContactName,
 	).Scan(&userAccountID)
 	if err != nil {
-		return 0, errs.ErrDB.WithInfo(err.Error())
+		return 0, errs.ErrDB.WithInfo(fmt.Sprintf("repository.createUserAccountIgnoreConflict: %v", err))
 	}
 	return userAccountID, nil
 }
@@ -96,12 +97,12 @@ func (repo *UserAccountRepositoryPostgres) createUserAccount(ctx context.Context
 		user.UserID, user.Issuer, user.SubjectUID, user.EmailAddress, user.ContactName,
 	).Scan(&userAccountID)
 	if err != nil {
-		if len(err.Error()) > 50 {
-			if err.Error()[:50] == pqDuplicateErr {
-				return 0, errs.ErrDBConstraint.WithInfo(err.Error())
-			}
+		errorInfo := fmt.Sprintf("repository.createUserAccount: %v", err)
+
+		if len(err.Error()) > 50 && err.Error()[:50] == pqDuplicateErr {
+			return 0, errs.ErrUserAccountExists.WithInfo(errorInfo)
 		}
-		return 0, errs.ErrDB.WithInfo(err.Error())
+		return 0, errs.ErrDB.WithInfo(errorInfo)
 	}
 	return userAccountID, nil
 }

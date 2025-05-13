@@ -17,5 +17,7 @@ var (
 	ErrUserAccountNotFound = New("USER_ACCOUNT_SV_USER_ACCOUNT_NOT_FOUND", "user account not found").WithCode(http.StatusNotFound)
 	ErrUserProfileNotFound = New("USER_ACCOUNT_SV_USER_PROFILE_NOT_FOUND", "user profile not found").WithCode(http.StatusNotFound)
 
-	ErrUserExists = New("USER_ACCOUNT_SV_USER_EXISTS", "user already exists").WithCode(http.StatusConflict)
+	ErrUserExists        = New("USER_ACCOUNT_SV_USER_EXISTS", "user already exists").WithCode(http.StatusConflict)
+	ErrUserAccountExists = New("USER_ACCOUNT_SV_USER_ACCOUNT_EXISTS", "user account already exists").WithCode(http.StatusConflict)
+	ErrUserProfileExists = New("USER_ACCOUNT_SV_USER_PROFILE_EXISTS", "user profile already exists").WithCode(http.StatusConflict)
 )

@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"event-calendar/internal/domain"
 	"event-calendar/internal/dto/dmodel"
@@ -57,7 +58,7 @@ func (repo *UserProfileRepositoryPostgres) GetUserProfilesCount(ctx context.Cont
 		if errors.Is(err, sql.ErrNoRows) {
 			return 0, nil
 		}
-		return 0, errs.ErrDB.WithInfo(err.Error())
+		return 0, errs.ErrDB.WithInfo(fmt.Sprintf("repository.GetUserProfilesCount: %v", err))
 	}
 
 	return count, nil
@@ -65,16 +66,16 @@ func (repo *UserProfileRepositoryPostgres) GetUserProfilesCount(ctx context.Cont
 
 // GetUserProfileByID retrieves a user profile by its unique ID.
 // Returns errs.ErrUserProfileNotFound if no matching record exists.
-func (repo *UserProfileRepositoryPostgres) GetUserProfileByID(ctx context.Context, id int64) (obj domain.UserProfile, err error) {
+func (repo *UserProfileRepositoryPostgres) GetUserProfileByID(ctx context.Context, ID int64) (obj domain.UserProfile, err error) {
 	var userProfileDto dmodel.UserProfile
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userProfileDto,
 		`SELECT * FROM user_profiles
-				WHERE id = $1`, id)
+				WHERE id = $1`, ID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return domain.UserProfile{}, errs.ErrUserProfileNotFound.WithInfo(err.Error())
+			return domain.UserProfile{}, errs.ErrUserProfileNotFound.WithInfo(fmt.Sprintf("repository.GetUserProfileByID: user profile not found for ID=%d", ID))
 		}
-		return domain.UserProfile{}, errs.ErrDB.WithInfo(err.Error())
+		return domain.UserProfile{}, errs.ErrDB.WithInfo(fmt.Sprintf("repository.GetUserProfileByID: %v", err))
 	}
 	return mapper.ProfileDtoToProfile(userProfileDto), nil
 }
@@ -89,26 +90,28 @@ func (repo *UserProfileRepositoryPostgres) GetUserProfileByUserID(ctx context.Co
 				WHERE user.id = $1`, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return domain.UserProfile{}, errs.ErrUserProfileNotFound.WithInfo(err.Error())
+			return domain.UserProfile{}, errs.ErrUserProfileNotFound.WithInfo(
+				fmt.Sprintf("repository.GetUserProfileByUserID: user profile not found for userID=%d", userID))
 		}
-		return domain.UserProfile{}, errs.ErrDB.WithInfo(err.Error())
+		return domain.UserProfile{}, errs.ErrDB.WithInfo(fmt.Sprintf("repository.GetUserProfileByUserID: %v", err))
 	}
 	return mapper.ProfileDtoToProfile(userProfileDto), nil
 }
 
-// GetUserProfileByFirebaseUID retrieves a user profile by user UID.
+// GetUserProfileByFirebaseUUID retrieves a user profile by user UID.
 // Returns errs.ErrUserProfileNotFound if no matching record exists.
-func (repo *UserProfileRepositoryPostgres) GetUserProfileByFirebaseUID(ctx context.Context, firebaseUID string) (obj domain.UserProfile, err error) {
+func (repo *UserProfileRepositoryPostgres) GetUserProfileByFirebaseUUID(ctx context.Context, firebaseUUID string) (obj domain.UserProfile, err error) {
 	var userProfileDto dmodel.UserProfile
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userProfileDto,
 		`SELECT * FROM user
     			LEFT JOIN user_profiles ON user.id = user_profiles.user_id
-				WHERE user.firebase_uid = $1`, firebaseUID)
+				WHERE user.firebase_uuid = $1`, firebaseUUID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return domain.UserProfile{}, errs.ErrUserProfileNotFound.WithInfo(err.Error())
+			return domain.UserProfile{}, errs.ErrUserProfileNotFound.WithInfo(
+				fmt.Sprintf("repository.GetUserProfileByFirebaseUUID: user profile not found for UUID=%s", firebaseUUID))
 		}
-		return domain.UserProfile{}, errs.ErrDB.WithInfo(err.Error())
+		return domain.UserProfile{}, errs.ErrDB.WithInfo(fmt.Sprintf("repository.GetUserProfileByFirebaseUUID: %v", err))
 	}
 	return mapper.ProfileDtoToProfile(userProfileDto), nil
 }
@@ -123,12 +126,12 @@ func (repo *UserProfileRepositoryPostgres) CreateUserProfile(ctx context.Context
 		user.FirstName, user.LastName, user.UserID, user.BusinessName, user.ContactEmail, user.Organization, user.AvatarFileName, user.Description,
 	).Scan(&userID)
 	if err != nil {
-		if len(err.Error()) > 50 {
-			if err.Error()[:50] == pqDuplicateErr {
-				return 0, errs.ErrDBConstraint.WithInfo(err.Error())
-			}
+		errorInfo := fmt.Sprintf("repository.CreateUserProfile: %v", err)
+
+		if len(err.Error()) > 50 && err.Error()[:50] == pqDuplicateErr {
+			return 0, errs.ErrUserProfileExists.WithInfo(errorInfo)
 		}
-		return 0, errs.ErrDB.WithInfo(err.Error())
+		return 0, errs.ErrDB.WithInfo(errorInfo)
 	}
 	return userID, nil
 }

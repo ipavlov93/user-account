@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"event-calendar/internal/domain"
 	"event-calendar/internal/dto/dmodel"
@@ -57,7 +58,7 @@ func (repo *UserRepositoryPostgres) GetUsersCount(ctx context.Context) (int64, e
 		if errors.Is(err, sql.ErrNoRows) {
 			return 0, nil
 		}
-		return 0, errs.ErrDB.WithInfo(err.Error())
+		return 0, errs.ErrDB.WithInfo(fmt.Sprintf("repository.GetUserByID: %v", err))
 	}
 
 	return count, nil
@@ -65,32 +66,34 @@ func (repo *UserRepositoryPostgres) GetUsersCount(ctx context.Context) (int64, e
 
 // GetUserByID retrieves a user by its unique ID.
 // Returns errs.ErrUserNotFound if no matching record exists.
-func (repo *UserRepositoryPostgres) GetUserByID(ctx context.Context, id int64) (obj domain.User, err error) {
+func (repo *UserRepositoryPostgres) GetUserByID(ctx context.Context, ID int64) (obj domain.User, err error) {
 	var userDto dmodel.User
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userDto,
 		`SELECT * FROM users
-				WHERE id = $1`, id)
+				WHERE id = $1`, ID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return domain.User{}, errs.ErrUserNotFound.WithInfo(err.Error())
+			return domain.User{}, errs.ErrUserNotFound.WithInfo(
+				fmt.Sprintf("repository.GetUserByID: user not found for ID=%d", ID))
 		}
-		return domain.User{}, errs.ErrDB.WithInfo(err.Error())
+		return domain.User{}, errs.ErrDB.WithInfo(fmt.Sprintf("repository.GetUserByID: %v", err))
 	}
 	return mapper.UserDtoToUser(userDto), nil
 }
 
-// GetUserByFirebaseUID retrieves a user by its unique Firebase UID.
+// GetUserByFirebaseUUID retrieves a user by its unique Firebase UID.
 // Returns errs.ErrUserNotFound if no matching record exists.
-func (repo *UserRepositoryPostgres) GetUserByFirebaseUID(ctx context.Context, firebaseUID string) (obj domain.User, err error) {
+func (repo *UserRepositoryPostgres) GetUserByFirebaseUUID(ctx context.Context, firebaseUUID string) (obj domain.User, err error) {
 	var userDto dmodel.User
 	err = sqlx.GetContext(ctx, repo.dbDriver, &userDto,
 		`SELECT * FROM users
-				WHERE firebase_uid = $1`, firebaseUID)
+				WHERE firebase_uuid = $1`, firebaseUUID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return domain.User{}, errs.ErrUserNotFound.WithInfo(err.Error())
+			return domain.User{}, errs.ErrUserNotFound.WithInfo(
+				fmt.Sprintf("repository.GetUserByFirebaseUUID: user not found for UUID=%s", firebaseUUID))
 		}
-		return domain.User{}, errs.ErrDB.WithInfo(err.Error())
+		return domain.User{}, errs.ErrDB.WithInfo(fmt.Sprintf("repository.GetUserByFirebaseUUID: %v", err))
 	}
 	return mapper.UserDtoToUser(userDto), nil
 }
@@ -101,16 +104,16 @@ func (repo *UserRepositoryPostgres) GetUserByFirebaseUID(ctx context.Context, fi
 func (repo *UserRepositoryPostgres) CreateUser(ctx context.Context, user domain.User) (userID int64, err error) {
 	err = repo.dbDriver.QueryRowxContext(
 		ctx,
-		`INSERT INTO users (firebase_uid, description) VALUES ($1, $2) RETURNING id`,
-		user.FirebaseUID, user.Description,
+		`INSERT INTO users (firebase_uuid, description) VALUES ($1, $2) RETURNING id`,
+		user.FirebaseUUID, user.Description,
 	).Scan(&userID)
 	if err != nil {
-		if len(err.Error()) > 50 {
-			if err.Error()[:50] == pqDuplicateErr {
-				return 0, errs.ErrDBConstraint.WithInfo(err.Error())
-			}
+		errorInfo := fmt.Sprintf("repository.CreateUser: %v", err)
+
+		if len(err.Error()) > 50 && err.Error()[:50] == pqDuplicateErr {
+			return 0, errs.ErrUserExists.WithInfo(errorInfo)
 		}
-		return 0, err
+		return 0, errs.ErrDB.WithInfo(errorInfo)
 	}
 	return userID, nil
 }

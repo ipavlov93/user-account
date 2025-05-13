@@ -22,8 +22,8 @@ type UserRepository interface {
 	WithTx[UserRepository]
 	CreateUser(ctx context.Context, user domain.User) (int64, error)
 	GetUsersCount(ctx context.Context) (int64, error)
-	GetUserByID(ctx context.Context, id int64) (domain.User, error)
-	GetUserByFirebaseUID(ctx context.Context, uuid string) (domain.User, error)
+	GetUserByID(ctx context.Context, ID int64) (domain.User, error)
+	GetUserByFirebaseUUID(ctx context.Context, uuid string) (domain.User, error)
 }
 
 // UserProfileRepository defines the contract for user profile persistence operations.
@@ -31,9 +31,9 @@ type UserProfileRepository interface {
 	WithTx[UserProfileRepository]
 	CreateUserProfile(ctx context.Context, user domain.UserProfile) (int64, error)
 	GetUserProfilesCount(ctx context.Context) (int64, error)
-	GetUserProfileByID(ctx context.Context, id int64) (user domain.UserProfile, err error)
+	GetUserProfileByID(ctx context.Context, ID int64) (user domain.UserProfile, err error)
 	GetUserProfileByUserID(ctx context.Context, userID int64) (user domain.UserProfile, err error)
-	GetUserProfileByFirebaseUID(ctx context.Context, firebaseUID string) (user domain.UserProfile, err error)
+	GetUserProfileByFirebaseUUID(ctx context.Context, firebaseUUID string) (user domain.UserProfile, err error)
 }
 
 // UserAccountRepository defines the contract for user account persistence operations.
