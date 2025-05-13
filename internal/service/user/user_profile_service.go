@@ -2,10 +2,10 @@ package userservice
 
 import (
 	"context"
-
 	"event-calendar/internal/domain"
 	"event-calendar/internal/option"
 	"event-calendar/internal/repository"
+	"fmt"
 )
 
 type UserProfileService struct {
@@ -34,10 +34,7 @@ func (s UserProfileService) GetUserProfileByID(
 
 	userProfile, err = repo.GetUserProfileByID(ctx, ID)
 	if err != nil {
-		//if errors.Is(err, repository.ErrNoRows) {
-		//return customError with status code NotFound
-		//}
-		return domain.UserProfile{}, false, err
+		return domain.UserProfile{}, false, fmt.Errorf("service.GetUserProfileByID: %w", err)
 	}
 
 	return userProfile, true, nil
@@ -57,10 +54,7 @@ func (s UserProfileService) GetUserProfileByUserID(
 
 	userProfile, err = repo.GetUserProfileByUserID(ctx, userID)
 	if err != nil {
-		//if errors.Is(err, repository.ErrNoRows) {
-		//return customError with status code NotFound
-		//}
-		return domain.UserProfile{}, false, err
+		return domain.UserProfile{}, false, fmt.Errorf("service.GetUserProfileByUserID: %w", err)
 	}
 
 	return userProfile, true, nil
@@ -78,12 +72,9 @@ func (s UserProfileService) GetUserProfileByUUID(
 	// inject tx into repository
 	repo := option.ApplyTx(s.userProfileRepository, options)
 
-	userProfile, err = repo.GetUserProfileByFirebaseUID(ctx, uuid)
+	userProfile, err = repo.GetUserProfileByFirebaseUUID(ctx, uuid)
 	if err != nil {
-		//if errors.Is(err, repository.ErrNoRows) {
-		//return customError with status code NotFound
-		//}
-		return domain.UserProfile{}, false, err
+		return domain.UserProfile{}, false, fmt.Errorf("service.GetUserProfileByUUID: %w", err)
 	}
 
 	return userProfile, true, nil
@@ -101,10 +92,7 @@ func (s UserProfileService) CreateUserProfile(
 
 	userProfileID, err := repo.CreateUserProfile(ctx, userProfile)
 	if err != nil {
-		//if errors.Is(err, repository.ErrDuplicate) {
-		//return customError with status code BadRequest
-		//}
-		return 0, err
+		return 0, fmt.Errorf("service.CreateUserProfile: %w", err)
 	}
 
 	return userProfileID, nil
