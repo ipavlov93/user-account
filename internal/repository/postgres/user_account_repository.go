@@ -7,13 +7,14 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
+
 	"event-calendar/internal/domain"
 	"event-calendar/internal/dto/dmodel"
 	errs "event-calendar/internal/error"
 	"event-calendar/internal/logger"
 	mapper "event-calendar/internal/mapper/user/dmodel"
 	"event-calendar/internal/repository"
-	"fmt"
 
 	"github.com/jmoiron/sqlx"
 )

@@ -2,10 +2,11 @@ package userservice
 
 import (
 	"context"
+	"fmt"
+
 	"event-calendar/internal/domain"
 	"event-calendar/internal/option"
 	"event-calendar/internal/repository"
-	"fmt"
 )
 
 type UserAccountService struct {
