@@ -2,10 +2,10 @@ package userservice
 
 import (
 	"context"
-
 	"event-calendar/internal/domain"
 	"event-calendar/internal/option"
 	"event-calendar/internal/repository"
+	"fmt"
 )
 
 type UserService struct {
@@ -34,10 +34,7 @@ func (s UserService) GetUserByID(
 
 	user, err := repo.GetUserByID(ctx, ID)
 	if err != nil {
-		//if errors.Is(err, repository.ErrNoRows) {
-		//return customError with status code NotFound
-		//}
-		return domain.User{}, false, err
+		return domain.User{}, false, fmt.Errorf("service.GetUserByID: %w", err)
 	}
 
 	return user, user.HasValidID(), nil
@@ -55,12 +52,9 @@ func (s UserService) GetUserByUUID(
 	// inject tx into repository
 	repo := option.ApplyTx(s.userRepository, options)
 
-	user, err := repo.GetUserByFirebaseUID(ctx, uuid)
+	user, err := repo.GetUserByFirebaseUUID(ctx, uuid)
 	if err != nil {
-		//if errors.Is(err, repository.ErrNoRows) {
-		//return customError with status code NotFound
-		//}
-		return domain.User{}, false, err
+		return domain.User{}, false, fmt.Errorf("service.GetUserByUUID: %w", err)
 	}
 
 	return user, user.HasValidID(), nil
@@ -78,10 +72,8 @@ func (s UserService) CreateUser(
 
 	userID, err := repo.CreateUser(ctx, user)
 	if err != nil {
-		//if errors.Is(err, repository.ErrDuplicate) {
-		//return customError with status code BadRequest
-		//}
-		return 0, err
+
+		return 0, fmt.Errorf("service.CreateUser: %w", err)
 	}
 
 	return userID, nil
