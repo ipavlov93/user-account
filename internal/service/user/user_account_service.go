@@ -2,10 +2,10 @@ package userservice
 
 import (
 	"context"
-
 	"event-calendar/internal/domain"
 	"event-calendar/internal/option"
 	"event-calendar/internal/repository"
+	"fmt"
 )
 
 type UserAccountService struct {
@@ -33,10 +33,7 @@ func (s UserAccountService) ListUserAccountsByUserID(
 
 	userAccounts, err = repo.ListUserAccountsByUserID(ctx, userID)
 	if err != nil {
-		//if errors.Is(err, repository.ErrNoRows) {
-		//return customError with status code NotFound
-		//}
-		return nil, err
+		return nil, fmt.Errorf("service.ListUserAccountsByUserID: %w", err)
 	}
 
 	return userAccounts, nil
@@ -64,7 +61,7 @@ func (s UserAccountService) CreateUserAccount(
 
 	userID, err := repo.CreateUserAccount(ctx, userAccount, ignoreConflicts)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("service.CreateUserAccount: %w", err)
 	}
 
 	return userID, nil
