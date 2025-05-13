@@ -57,7 +57,7 @@ func (repo *UserProfileRepositoryPostgres) GetUserProfilesCount(ctx context.Cont
 		if errors.Is(err, sql.ErrNoRows) {
 			return 0, nil
 		}
-		return 0, errs.ErrDB.WithInfo(err.Error())
+		return 0, errs.ErrDB.WithInfo(fmt.Sprintf("repository: %v", err))
 	}
 
 	return count, nil
@@ -74,7 +74,7 @@ func (repo *UserProfileRepositoryPostgres) GetUserProfileByID(ctx context.Contex
 		if errors.Is(err, sql.ErrNoRows) {
 			return domain.UserProfile{}, errs.ErrUserProfileNotFound.WithInfo(fmt.Sprintf("repository: user profile not found for ID=%d", ID))
 		}
-		return domain.UserProfile{}, errs.ErrDB.WithInfo(err.Error())
+		return domain.UserProfile{}, errs.ErrDB.WithInfo(fmt.Sprintf("repository: %v", err))
 	}
 	return mapper.ProfileDtoToProfile(userProfileDto), nil
 }
@@ -92,7 +92,7 @@ func (repo *UserProfileRepositoryPostgres) GetUserProfileByUserID(ctx context.Co
 			return domain.UserProfile{}, errs.ErrUserProfileNotFound.WithInfo(
 				fmt.Sprintf("repository: user profile not found for userID=%d", userID))
 		}
-		return domain.UserProfile{}, errs.ErrDB.WithInfo(err.Error())
+		return domain.UserProfile{}, errs.ErrDB.WithInfo(fmt.Sprintf("repository: %v", err))
 	}
 	return mapper.ProfileDtoToProfile(userProfileDto), nil
 }
@@ -110,7 +110,7 @@ func (repo *UserProfileRepositoryPostgres) GetUserProfileByFirebaseUUID(ctx cont
 			return domain.UserProfile{}, errs.ErrUserProfileNotFound.WithInfo(
 				fmt.Sprintf("repository: user profile not found for uid=%s", firebaseUUID))
 		}
-		return domain.UserProfile{}, errs.ErrDB.WithInfo(err.Error())
+		return domain.UserProfile{}, errs.ErrDB.WithInfo(fmt.Sprintf("repository: %v", err))
 	}
 	return mapper.ProfileDtoToProfile(userProfileDto), nil
 }
@@ -126,9 +126,9 @@ func (repo *UserProfileRepositoryPostgres) CreateUserProfile(ctx context.Context
 	).Scan(&userID)
 	if err != nil {
 		if len(err.Error()) > 50 && err.Error()[:50] == pqDuplicateErr {
-			return 0, errs.ErrUserProfileExists.WithInfo(err.Error())
+			return 0, errs.ErrUserProfileExists.WithInfo(fmt.Sprintf("repository: %v", err))
 		}
-		return 0, errs.ErrDB.WithInfo(err.Error())
+		return 0, errs.ErrDB.WithInfo(fmt.Sprintf("repository: %v", err))
 	}
 	return userID, nil
 }
