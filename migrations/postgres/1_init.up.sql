@@ -1,8 +1,8 @@
 -- +goose Up
-create table users
+create table IF NOT EXISTS users
 (
     id           serial primary key,
-    firebase_uid varchar(100) unique     not null,
+    firebase_uuid varchar(100) unique     not null,
     description  text null,
     created_at   timestamp default now() not null,
     updated_at   timestamp default now() not null,
@@ -10,7 +10,7 @@ create table users
 );
 
 -- +goose Up
-create table user_accounts
+create table IF NOT EXISTS user_accounts
 (
     id            serial primary key,
     user_id       int                     not null,
@@ -31,7 +31,7 @@ create table user_accounts
 create INDEX IF NOT EXISTS user_accounts_user_id ON user_accounts (user_id);
 
 -- +goose Up
-create table user_profiles
+create table IF NOT EXISTS user_profiles
 (
     id               serial primary key,
     user_id          int                     not null,
