@@ -4,6 +4,8 @@
 
 set -e
 
+echo "Step 1. Running initial script to create database and user (ROLE) with granted access to it"
+
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
     -- Create role if it doesn't exist
     DO \$\$
@@ -17,11 +19,20 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     -- Create database and grant access
     DO \$\$
     BEGIN
-        IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '${$POSTGRES_DB}') THEN
+        IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '${POSTGRES_DB}') THEN
             CREATE DATABASE ${POSTGRES_DB};
         END IF;
     END
     \$\$;
 
-    GRANT ALL PRIVILEGES ON DATABASE ${$POSTGRES_DB} TO ${POSTGRES_USER};
+    GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRES_USER};
 EOSQL
+
+echo "Step 2. Running initial schema migration. Running migrations from SQL files..."
+
+#psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" -f ../migrations/postgres/1_init.up.sql
+
+for f in /docker-entrypoint-initdb.d/migrations/*.sql; do
+  echo "Applying $f..."
+  psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" -f "$f"
+done
