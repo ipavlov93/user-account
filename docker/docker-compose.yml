@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   api:
-    container_name: bookly-api
+    container_name: user-account-api
     build:
       context: ..
       dockerfile: docker/Dockerfile
@@ -20,10 +20,10 @@ services:
       - DB_HOST=db
       - DB_PORT=${DB_PORT}
     networks:
-      - bookly-network
+      - user-account-network
   db:
     image: postgres:15
-    container_name: bookly_db
+    container_name: user-account_db
     ports:
       - ${DB_PORT}:${DB_PORT}
     environment:
@@ -32,12 +32,14 @@ services:
       POSTGRES_DB: ${DB_NAME}
     volumes:
       - ./docker-init-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh:ro
+      - ../migrations/postgres:/docker-entrypoint-initdb.d/migrations:ro
+      - database_postgres:/var/lib/postgresql/data
     networks:
-      - bookly-network
+      - user-account-network
 
 volumes:
   database_postgres:
 
 networks:
-  bookly-network:
+  user-account-network:
     driver: bridge
