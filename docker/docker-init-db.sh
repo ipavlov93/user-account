@@ -28,7 +28,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRES_USER};
 EOSQL
 
-echo "Step 2. Running initial schema migration. Running migrations from SQL files..."
+echo "Step 2. Running initial schema migration. Migrations SQL files located in docker-entrypoint-initdb.d/migrations ..."
 
 #psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" -f ../migrations/postgres/1_init.up.sql
 
