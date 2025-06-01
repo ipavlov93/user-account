@@ -1,9 +1,10 @@
 package meet
 
 import (
-	"event-calendar/internal/domain"
 	"fmt"
 	"time"
+
+	"event-calendar/internal/domain"
 )
 
 type Meet struct {
@@ -76,8 +77,8 @@ func newMeet(
 	}
 
 	// add participants to meet
-	for _, id := range attenderIDs {
-		meet.Participants = append(meet.Participants, domain.User{ID: id})
+	for _, attenderID := range attenderIDs {
+		meet.Participants = append(meet.Participants, domain.User{ID: attenderID})
 	}
 	meet.Participants = append(
 		meet.Participants,

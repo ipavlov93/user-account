@@ -25,7 +25,7 @@ func TestNewUser(t *testing.T) {
 	t.Run("should create user and init giving fields", func(t *testing.T) {
 		// ACT
 		testUser := domain.NewUser(
-			expectedUser.FirebaseUID,
+			expectedUser.FirebaseUUID,
 			expectedUser.Description,
 			roles...,
 		)

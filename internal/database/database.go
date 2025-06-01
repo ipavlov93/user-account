@@ -14,3 +14,9 @@ type DBAdapter interface {
 	// MustRollbackTxUnlessCommitted name is preferred than MustCommit
 	MustRollbackTxUnlessCommitted(tx *sqlx.Tx)
 }
+
+type DBMigrator interface {
+	CloseConnection() error
+	Up(dialect, migrationDirPath string) error
+	//Down(dialect, migrationDirPath string) error
+}

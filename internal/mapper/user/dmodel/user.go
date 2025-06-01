@@ -12,8 +12,8 @@ import (
 // IMPORTANT: ignore field Roles, CreatedAt.
 func UserToUserDto(user domain.User) dmodel.User {
 	return dmodel.User{
-		ID:          user.ID,
-		FirebaseUID: user.FirebaseUID,
+		ID:           user.ID,
+		FirebaseUUID: user.FirebaseUUID,
 		Description: func(desc string) sql.NullString {
 			return sql.NullString{
 				String: desc,
@@ -25,10 +25,10 @@ func UserToUserDto(user domain.User) dmodel.User {
 
 func UserDtoToUser(user dmodel.User) domain.User {
 	return domain.User{
-		ID:          user.ID,
-		FirebaseUID: user.FirebaseUID,
-		Description: user.Description.String,
-		CreatedAt:   user.CreatedAt,
+		ID:           user.ID,
+		FirebaseUUID: user.FirebaseUUID,
+		Description:  user.Description.String,
+		CreatedAt:    user.CreatedAt,
 	}
 }
 
@@ -36,8 +36,8 @@ func UserDtoToUser(user dmodel.User) domain.User {
 // IMPORTANT: ignore field Roles, CreatedAt.
 func MapUserDtos(user smodel.User) dmodel.User {
 	return dmodel.User{
-		ID:          user.ID,
-		FirebaseUID: user.FirebaseUID,
+		ID:           user.ID,
+		FirebaseUUID: user.FirebaseUUID,
 		Description: func(desc string) sql.NullString {
 			return sql.NullString{
 				String: desc,

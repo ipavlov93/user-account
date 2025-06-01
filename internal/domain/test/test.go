@@ -28,23 +28,23 @@ func CreateTestClaims(value string) claims.FirebaseAuthClaims {
 
 // CreateTestUser fill all fields based on given value.
 // IMPORTANT: set CreatedAt as time.Now().
-func CreateTestUser(id int) domain.User {
+func CreateTestUser(ID int) domain.User {
 	return domain.User{
-		ID:          int64(id),
-		FirebaseUID: fmt.Sprint(id),
-		Description: fmt.Sprintf("Description%d", id),
-		CreatedAt:   time.Now(),
+		ID:           int64(ID),
+		FirebaseUUID: fmt.Sprint(ID),
+		Description:  fmt.Sprintf("Description%d", ID),
+		CreatedAt:    time.Now(),
 	}
 }
 
 // CreateTestUserAccount fill all fields based on given value.
 // IMPORTANT: ignore UserID.
-func CreateTestUserAccount(id int) domain.UserAccount {
+func CreateTestUserAccount(ID int) domain.UserAccount {
 	return domain.UserAccount{
-		ID:           int64(id),
-		Issuer:       domain.NewIssuer(fmt.Sprint(id)),
-		SubjectUID:   fmt.Sprintf("SubjectUID%d", id),
-		EmailAddress: fmt.Sprintf("%d@test.com", id),
+		ID:           int64(ID),
+		Issuer:       domain.NewIssuer(fmt.Sprint(ID)),
+		SubjectUID:   fmt.Sprintf("SubjectUID%d", ID),
+		EmailAddress: fmt.Sprintf("%d@test.com", ID),
 	}
 }
 
@@ -52,16 +52,16 @@ func CreateTestUserAccount(id int) domain.UserAccount {
 // IMPORTANT:
 // - ignore UserID
 // - set CreatedAt as time.Now().
-func CreateTestUserProfile(id int) domain.UserProfile {
+func CreateTestUserProfile(ID int) domain.UserProfile {
 	return domain.UserProfile{
-		ID:             int64(id),
-		FirstName:      fmt.Sprintf("FirstName%d", id),
-		LastName:       fmt.Sprintf("LastName%d", id),
-		BusinessName:   fmt.Sprintf("BusinessName%d", id),
-		ContactEmail:   fmt.Sprintf("%d@test.com", id),
-		Organization:   fmt.Sprintf("Organization%d", id),
-		Description:    fmt.Sprintf("Description%d", id),
-		AvatarFileName: fmt.Sprintf("AvatarFileName%d", id),
+		ID:             int64(ID),
+		FirstName:      fmt.Sprintf("FirstName%d", ID),
+		LastName:       fmt.Sprintf("LastName%d", ID),
+		BusinessName:   fmt.Sprintf("BusinessName%d", ID),
+		ContactEmail:   fmt.Sprintf("%d@test.com", ID),
+		Organization:   fmt.Sprintf("Organization%d", ID),
+		Description:    fmt.Sprintf("Description%d", ID),
+		AvatarFileName: fmt.Sprintf("AvatarFileName%d", ID),
 		CreatedAt:      time.Now(),
 	}
 }

@@ -75,8 +75,8 @@ func VerifyAccessToken(jwks jwkset.Storage, accessToken string) (userClaims clai
 	//}
 	//
 	//// Required custom claim
-	//if firebaseUID, exists := claimsMap["firebase_uid"].(string); exists {
-	//	userClaims.FirebaseUID = firebaseUID
+	//if firebaseUUID, exists := claimsMap["firebase_uuid"].(string); exists {
+	//	userClaims.FirebaseUUID = firebaseUUID
 	//}
 	//
 	//// Optional claims

@@ -47,7 +47,7 @@ func SetValidIssuer(iss issuer) issuer {
 	return UnknownIssuer
 }
 
-// UserAccount represents the registered (authenticated at least once) user of Bookly application.
+// UserAccount represents the registered (authenticated at least once) user
 type UserAccount struct {
 	ID           int64
 	UserID       int64

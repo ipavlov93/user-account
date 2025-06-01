@@ -68,7 +68,7 @@ func (s FirebaseAuthService) VerifyIDToken(idToken string) (token *auth.Token, e
 
 	// TODO:
 	// 1. Add key to (session) cache if SetRolePrivilegesToClaims doesn't work
-	// 1. test auth after SetRolePrivilegesToClaims, does token (access or id?) contains firebaseUID
+	// 1. test auth after SetRolePrivilegesToClaims, does token (access or id?) contains firebaseUUID
 
 	return token, nil
 }
@@ -94,13 +94,13 @@ func (s FirebaseAuthService) RevokeRefreshTokens(ctx context.Context, idToken st
 // It sets "processed" custom claim to mark user in Firestore as synced with back-end.
 // The new custom claims will propagate to the user's ID token the next time a new one is issued.
 // Note: this operation always overwrites the user's existing custom claims.
-func (s FirebaseAuthService) SetRolePrivilegesToClaims(firebaseUID string, roles []role.Role) error {
+func (s FirebaseAuthService) SetRolePrivilegesToClaims(firebaseUUID string, roles []role.Role) error {
 	customClaims := map[string]any{
 		"roles": roles,
 	}
 
-	return s.firebaseAuthService.SetCustomUserClaims(context.Background(), firebaseUID, customClaims)
+	return s.firebaseAuthService.SetCustomUserClaims(context.Background(), firebaseUUID, customClaims)
 }
 
 // todo: checkExistingCustomClaims in token claims before override them (all the custom claims).
-//func (s FirebaseAuthService) checkExistingCustomClaims(firebaseUID string, roles []claims.Role) error {
+//func (s FirebaseAuthService) checkExistingCustomClaims(firebaseUUID string, roles []claims.Role) error {

@@ -8,10 +8,10 @@ import (
 
 func UserToUserDto(user domain.User) smodel.User {
 	return smodel.User{
-		ID:          user.ID,
-		FirebaseUID: user.FirebaseUID,
-		Description: user.Description,
-		CreatedAt:   user.CreatedAt,
+		ID:           user.ID,
+		FirebaseUUID: user.FirebaseUUID,
+		Description:  user.Description,
+		CreatedAt:    user.CreatedAt,
 	}
 }
 
@@ -19,18 +19,18 @@ func UserToUserDto(user domain.User) smodel.User {
 // IMPORTANT: ignore CreatedAt.
 func UserDtoToUser(user smodel.User) domain.User {
 	return domain.User{
-		ID:          user.ID,
-		FirebaseUID: user.FirebaseUID,
-		Description: user.Description,
+		ID:           user.ID,
+		FirebaseUUID: user.FirebaseUUID,
+		Description:  user.Description,
 	}
 }
 
 // MapDto maps Dmodel.User to Smodel.User
 func MapDto(user dmodel.User) smodel.User {
 	return smodel.User{
-		ID:          user.ID,
-		FirebaseUID: user.FirebaseUID,
-		Description: user.Description.String,
-		CreatedAt:   user.CreatedAt,
+		ID:           user.ID,
+		FirebaseUUID: user.FirebaseUUID,
+		Description:  user.Description.String,
+		CreatedAt:    user.CreatedAt,
 	}
 }

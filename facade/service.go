@@ -20,19 +20,19 @@ type AuthService interface {
 type FirebaseAuthService interface {
 	VerifyIDToken(idToken string) (token *auth.Token, err error)
 	RevokeRefreshTokens(ctx context.Context, idToken string) error
-	SetRolePrivilegesToClaims(firebaseUID string, roles []role.Role) error
+	SetRolePrivilegesToClaims(firebaseUUID string, roles []role.Role) error
 }
 
 type UserService interface {
 	CreateUser(ctx context.Context, user domain.User, options *option.TxOption) (int64, error)
-	GetUserByID(ctx context.Context, id int64, options *option.TxOption) (user domain.User, found bool, err error)
+	GetUserByID(ctx context.Context, ID int64, options *option.TxOption) (user domain.User, found bool, err error)
 	GetUserByUUID(ctx context.Context, uuid string, options *option.TxOption) (user domain.User, found bool, err error)
 }
 
 type UserProfileService interface {
 	CreateUserProfile(ctx context.Context, user domain.UserProfile, options *option.CreateOptions) (int64, error)
-	GetUserProfileByID(ctx context.Context, id int64, options *option.TxOption) (user domain.UserProfile, found bool, err error)
-	GetUserProfileByUserID(ctx context.Context, id int64, options *option.TxOption) (user domain.UserProfile, found bool, err error)
+	GetUserProfileByID(ctx context.Context, ID int64, options *option.TxOption) (user domain.UserProfile, found bool, err error)
+	GetUserProfileByUserID(ctx context.Context, ID int64, options *option.TxOption) (user domain.UserProfile, found bool, err error)
 	GetUserProfileByUUID(ctx context.Context, uuid string, options *option.TxOption) (user domain.UserProfile, found bool, err error)
 }
 
