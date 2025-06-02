@@ -1,4 +1,5 @@
 -- +goose Up
+-- +goose StatementBegin
 create table IF NOT EXISTS users
 (
     id           serial primary key,
@@ -9,7 +10,6 @@ create table IF NOT EXISTS users
     deleted_at   timestamp null
 );
 
--- +goose Up
 create table IF NOT EXISTS user_accounts
 (
     id            serial primary key,
@@ -22,15 +22,14 @@ create table IF NOT EXISTS user_accounts
     email_address varchar(100)            not null,
     created_at    timestamp default now() not null,
     constraint user_accounts_users_user_id
-        foreign key (user_id)
-            references users (id)
-            on update cascade on delete cascade
+    foreign key (user_id)
+    references users (id)
+    on update cascade on delete cascade
     -- commented due to subject_uid is null
 --     constraint unique_user_subject unique (user_id, subject_uid)
-);
+    );
 create INDEX IF NOT EXISTS user_accounts_user_id ON user_accounts (user_id);
 
--- +goose Up
 create table IF NOT EXISTS user_profiles
 (
     id               serial primary key,
@@ -45,5 +44,6 @@ create table IF NOT EXISTS user_profiles
     created_at       timestamp default now() not null,
     updated_at       timestamp default now() not null,
     deleted_at       timestamp null
-);
+    );
 create INDEX IF NOT EXISTS user_profiles_user_id ON user_profiles (user_id);
+-- +goose StatementEnd
