@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  api:
+  user-account-api:
     container_name: user-account-api
     build:
       context: ..
@@ -10,18 +10,18 @@ services:
       - ${HTTP_SERVER_PORT}:${HTTP_SERVER_PORT}
     restart: on-failure
     depends_on:
-      - db
+      - user-account-db
     environment:
       - HTTP_SERVER_PORT=${HTTP_SERVER_PORT}
       - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOST=db
+      - DB_HOST=user-account-db
       - DB_PORT=${DB_PORT}
     networks:
       - user-account-network
-  db:
+  user-account-db:
     image: postgres:15
     container_name: user-account_db
     ports:
@@ -32,7 +32,7 @@ services:
       POSTGRES_DB: ${DB_NAME}
     volumes:
       - ./docker-init-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh:ro
-      - ../migrations/postgres:/docker-entrypoint-initdb.d/migrations:ro
+      - ../internal/migrations/postgres:/docker-entrypoint-initdb.d/migrations:ro
       - database_postgres:/var/lib/postgresql/data
     networks:
       - user-account-network

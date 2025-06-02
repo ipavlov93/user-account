@@ -11,7 +11,7 @@ RUN go mod download
 COPY . .
 
 # Build the Go binary
-RUN go build -o bookly-api ./cmd
+RUN go build -o user-account-api ./cmd
 
 # --- Runtime image ---
 FROM alpine:latest
@@ -22,11 +22,11 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /app
 
 # Copy the built binary from builder
-COPY --from=builder /app/bookly-api .
+COPY --from=builder /app/user-account-api .
 
 # Copy auth private key
 COPY account.json .
 ENV GOOGLE_APPLICATION_CREDENTIALS=/app/account.json
 
 # Run the app
-ENTRYPOINT ["/app/bookly-api"]
+ENTRYPOINT ["/app/user-account-api"]
