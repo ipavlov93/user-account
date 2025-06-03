@@ -4,8 +4,8 @@ services:
   user-account-api:
     container_name: user-account-api
     build:
-      context: ..
-      dockerfile: docker/Dockerfile
+      context: ../..
+      dockerfile: docker/app/Dockerfile
     ports:
       - ${HTTP_SERVER_PORT}:${HTTP_SERVER_PORT}
     restart: on-failure
@@ -19,8 +19,29 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_HOST=user-account-db
       - DB_PORT=${DB_PORT}
+      - DB_OPTION=${DB_OPTION}
     networks:
       - user-account-network
+#  user-account-migrator:
+#    container_name: user-account-migrator
+#    build:
+#      context: ../..
+#      dockerfile: Dockerfile.migrator
+#    restart: on-failure
+#    depends_on:
+#      - user-account-api
+#    environment:
+#      - GOOSE_DRIVER=${GOOSE_DRIVER}
+#      - GOOSE_MIGRATION_DIR=${GOOSE_MIGRATION_DIR}
+#      - GOOSE_DBSTRING=${GOOSE_DBSTRING}
+#      - DB_NAME=${DB_NAME}
+#      - DB_USER=${DB_USER}
+#      - DB_PASSWORD=${DB_PASSWORD}
+#      - DB_HOST=user-account-db
+#      - DB_PORT=${DB_PORT}
+#      - DB_OPTION=${DB_OPTION}
+#    networks:
+#      - user-account-network
   user-account-db:
     image: postgres:15
     container_name: user-account_db
@@ -32,7 +53,7 @@ services:
       POSTGRES_DB: ${DB_NAME}
     volumes:
       - ./docker-init-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh:ro
-      - ../internal/migrations/postgres:/docker-entrypoint-initdb.d/migrations:ro
+      - ../../internal/migrations/postgres:/docker-entrypoint-initdb.d/migrations:ro
       - database_postgres:/var/lib/postgresql/data
     networks:
       - user-account-network

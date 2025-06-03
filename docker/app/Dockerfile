@@ -8,7 +8,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 # Copy the source code
-COPY . .
+COPY .. .
 
 # Build the Go binary
 RUN go build -o user-account-api ./cmd
