@@ -12,9 +12,10 @@ goose_install:
 # always create new migration file and optionally apply sequential ordering to it (if previous files exist)"
 create_valid_migration: create_migration migrate_fix migrate_validate
 
+MIGRATION_NAME=$(or $(MIGRATION), new_migration)
 create_migration:
 	@echo "Running goose create init sql"
-	$(GOOSE_ENV) goose create new_migration sql
+	$(GOOSE_ENV) goose create $(MIGRATION_NAME) sql
 
 migrate_version:
 	$(GOOSE_ENV) goose version
