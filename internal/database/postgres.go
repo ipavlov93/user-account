@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
 	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq" //The postgres driver
 )
 
 type PostgresAdapter struct {
@@ -13,11 +13,10 @@ type PostgresAdapter struct {
 }
 
 // MustNewPostgresAdapter tries to connect to Postgres database, panics if connection has failed.
-// WARNING: sslmode is disabled. It's not recommended use disabled sslmode in production.
 // MustNewPostgresAdapter returns PostgresAdapter
-func MustNewPostgresAdapter(host string, port int, user, password, dbname string) PostgresAdapter {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+func MustNewPostgresAdapter(host string, port int, user, password, dbname, option string) PostgresAdapter {
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s %s",
+		host, port, user, password, dbname, option)
 
 	// panics due to failed connection to database
 	connection := sqlx.MustConnect("postgres", psqlInfo)
