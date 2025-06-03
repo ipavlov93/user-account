@@ -1,0 +1,15 @@
+version: "2"
+linters:
+  default: none
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - misspell
+    - staticcheck
+    - testifylint
+    - unused
+formatters:
+  enable:
+    - gofmt ./...
+    - goimports --local event-calendar/ -l -w .
