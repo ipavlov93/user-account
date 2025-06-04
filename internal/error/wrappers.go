@@ -9,6 +9,11 @@ var (
 	ErrDBNoRows     = New("USER_ACCOUNT_SV_DB_NO_ROWS", "database no rows found")
 	ErrDBConstraint = New("USER_ACCOUNT_SV_DB_CONSTRAINT", "duplicate record").WithCode(http.StatusConflict)
 
+	ErrDisabledToken = New("USER_ACCOUNT_SV_DISABLED_TOKEN", "disabled token").WithCode(http.StatusUnauthorized)
+	ErrInvalidToken  = New("USER_ACCOUNT_SV_INVALID_TOKEN", "invalid token").WithCode(http.StatusUnauthorized)
+	ErrExpiredToken  = New("USER_ACCOUNT_SV_EXPIRED_TOKEN", "expired token").WithCode(http.StatusUnauthorized)
+	ErrRevokedToken  = New("USER_ACCOUNT_SV_REVOKED_TOKEN", "revoked token").WithCode(http.StatusUnauthorized)
+
 	ErrRequestRequired = New("USER_ACCOUNT_SV_REQUEST_REQUIRED", "request required").WithCode(http.StatusBadRequest)
 	ErrInvalidArgument = New("USER_ACCOUNT_SV_BAD_REQUEST", "bad request argument(s)").WithCode(http.StatusBadRequest)
 
