@@ -3,15 +3,15 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"event-calendar/internal/domain/claims"
+	"event-calendar/internal/logger"
+	auth "event-calendar/internal/service/authorization"
+	firebaseauth "event-calendar/internal/service/firebase"
 	"fmt"
-	"log"
 	"net/http"
-	"os"
 	"strings"
 
-	"event-calendar/internal/domain/claims"
-	firebaseauth "event-calendar/internal/service/authentication"
-	auth "event-calendar/internal/service/authorization"
+	"go.uber.org/zap"
 )
 
 const (
@@ -20,35 +20,34 @@ const (
 
 	firebaseClaimsKey = "firebase-claims"
 	userClaimsKey     = "user-claims"
-
-	loggerPrefix = "api-middleware"
 )
 
 type AuthMiddleware struct {
-	firebaseAuthService firebaseauth.FirebaseAuthService
-	logger              *log.Logger
+	firebaseAuthService firebaseauth.AuthService
+	logger              logger.Logger
 	providerKeySetURLs  []string // auth provider key set URLs
 }
 
-// NewAuthMiddleware set default logger. Use WithOption() to set custom logger.
+// NewAuthMiddleware set default logger. Use WithLogger() to set custom logger.
 func NewAuthMiddleware(
-	service firebaseauth.FirebaseAuthService,
+	service firebaseauth.AuthService,
 	providerKeySetURLs []string,
-) AuthMiddleware {
-	return AuthMiddleware{
+) *AuthMiddleware {
+	return &AuthMiddleware{
 		firebaseAuthService: service,
 		providerKeySetURLs:  providerKeySetURLs,
-		logger:              log.New(os.Stdout, loggerPrefix, log.LstdFlags|log.Lshortfile),
 	}
 }
 
-func (m AuthMiddleware) WithOption(logger *log.Logger) {
+// WithLogger sets the logger and returns the *AuthMiddleware
+func (m *AuthMiddleware) WithLogger(logger logger.Logger) *AuthMiddleware {
 	if logger != nil {
 		m.logger = logger
 	}
+	return m
 }
 
-func (m AuthMiddleware) RequireValidIDToken(next http.Handler) http.Handler {
+func (m *AuthMiddleware) RequireValidIDToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		token, err := retrieveBearerToken(r)
 		if err != nil {
@@ -68,7 +67,7 @@ func (m AuthMiddleware) RequireValidIDToken(next http.Handler) http.Handler {
 
 		parsedClaims, err := parseIDTokenClaims(idToken.Claims)
 		if err != nil {
-			m.logger.Printf("parseIDTokenClaims(): parse ID token claims error %s", err)
+			m.logger.Error("parseIDTokenClaims(): parse ID token claims error", zap.Error(err))
 			http.Error(rw,
 				http.StatusText(http.StatusInternalServerError),
 				http.StatusInternalServerError)
@@ -83,7 +82,7 @@ func (m AuthMiddleware) RequireValidIDToken(next http.Handler) http.Handler {
 	})
 }
 
-func (m AuthMiddleware) RequireValidAccessToken(next http.Handler) http.Handler {
+func (m *AuthMiddleware) RequireValidAccessToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		accessToken, err := retrieveBearerToken(r)
 		if err != nil {
@@ -96,7 +95,7 @@ func (m AuthMiddleware) RequireValidAccessToken(next http.Handler) http.Handler 
 		// Initialize JWK Set client with your JWK Set URLs
 		jwks, err := auth.InitializeJWKSetClient(m.providerKeySetURLs)
 		if err != nil {
-			m.logger.Printf("InitializeJWKSetClient(): %s", err)
+			m.logger.Error("InitializeJWKSetClient()", zap.Error(err))
 			http.Error(rw,
 				http.StatusText(http.StatusInternalServerError),
 				http.StatusInternalServerError)

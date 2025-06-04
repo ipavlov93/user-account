@@ -1,36 +1,37 @@
 package handler
 
 import (
-	"log"
-	"net/http"
-	"os"
-
 	"event-calendar/facade"
+	"event-calendar/internal/logger"
+	"net/http"
+
+	"go.uber.org/zap"
 )
 
 type AuthController struct {
 	service facade.AuthService
-	logger  *log.Logger
+	logger  logger.Logger
 }
 
-// NewAuthController set default logger. Use WithOption() to set custom logger.
-func NewAuthController(service facade.AuthService) AuthController {
-	return AuthController{
+// NewAuthController set default logger. Use WithLogger() to set custom logger.
+func NewAuthController(service facade.AuthService) *AuthController {
+	return &AuthController{
 		service: service,
-		logger:  log.New(os.Stdout, loggerPrefix, log.LstdFlags|log.Lshortfile),
 	}
 }
 
-func (c AuthController) WithOption(logger *log.Logger) {
+// WithLogger sets the logger and returns the *AuthMiddleware
+func (c *AuthController) WithLogger(logger logger.Logger) *AuthController {
 	if logger != nil {
 		c.logger = logger
 	}
+	return c
 }
 
-func (c AuthController) LoginHandler(rw http.ResponseWriter, r *http.Request) {
+func (c *AuthController) LoginHandler(rw http.ResponseWriter, r *http.Request) {
 	claims, ok := getTokenClaims(r.Context())
 	if claims == nil || !ok {
-		c.logger.Printf("request context contains not valid claims. %T are expected", claims)
+		c.logger.Error("request context contains not valid claims. %T are expected")
 		http.Error(rw,
 			"empty claims",
 			http.StatusInternalServerError)
@@ -39,7 +40,7 @@ func (c AuthController) LoginHandler(rw http.ResponseWriter, r *http.Request) {
 
 	err := c.service.Login(r.Context(), claims)
 	if err != nil {
-		c.logger.Printf("Login(): %s", err)
+		c.logger.Error("Login()", zap.Error(err))
 		http.Error(rw,
 			http.StatusText(http.StatusInternalServerError),
 			http.StatusInternalServerError)
