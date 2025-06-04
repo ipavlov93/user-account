@@ -11,6 +11,9 @@ type FirebaseAuthClaims struct {
 	// fields set by SignInProvider provider
 	Name       string `json:"name"`
 	PictureURL string `json:"picture"`
+	// custom claims
+	Roles     []string `json:"roles"`
+	Processed bool     `json:"processed"`
 }
 
 type IdentityClaims struct {

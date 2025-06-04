@@ -4,7 +4,7 @@ import (
 	"event-calendar/internal/domain/role"
 )
 
-// UserClaims represents extracted claims from an access token. Access Token is ID token that contains custom claims.
+// UserClaims represents extracted claims from ID token that contains custom claims.
 type UserClaims struct {
 	FirebaseUUID string `json:"user_id"`
 	Subject      string `json:"sub"` // Auth provider user ID
