@@ -3,13 +3,14 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"net/http"
+	"strings"
+
 	"event-calendar/internal/domain/claims"
 	"event-calendar/internal/logger"
 	auth "event-calendar/internal/service/authorization"
 	firebaseauth "event-calendar/internal/service/firebase"
-	"fmt"
-	"net/http"
-	"strings"
 
 	"go.uber.org/zap"
 )

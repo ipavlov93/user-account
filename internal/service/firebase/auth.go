@@ -2,8 +2,9 @@ package firebase
 
 import (
 	"context"
-	errs "event-calendar/internal/error"
 	"time"
+
+	errs "event-calendar/internal/error"
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
@@ -84,7 +85,7 @@ func (s AuthService) RevokeRefreshTokens(ctx context.Context, idToken string) er
 	return nil
 }
 
-// ResetCustomClaims resets custom claims to future ID tokens (read SetCustomUserClaims docs).
+// ResetCustomClaims resets custom user claims to future ID tokens (read SetCustomUserClaims docs).
 // The new custom claims will propagate to the user's ID token the next time a new one is issued.
 // Note: this operation always overwrites the user's existing custom claims.
 func (s AuthService) ResetCustomClaims(firebaseUUID string, customClaims map[string]any) error {

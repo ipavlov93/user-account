@@ -1,9 +1,10 @@
 package handler
 
 import (
+	"net/http"
+
 	"event-calendar/facade"
 	"event-calendar/internal/logger"
-	"net/http"
 
 	"go.uber.org/zap"
 )
