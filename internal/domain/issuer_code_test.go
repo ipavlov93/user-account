@@ -9,7 +9,7 @@ import (
 func TestIssuerCode_String_Unknown(t *testing.T) {
 	// ✅ Safe: create issuer using constructor returns UnknownIssuer for invalid input
 	// returns UnknownIssuer for unknown inputs.
-	code := NewIssuerCode("some-unknown-code")
+	code := NewIssuer("some-unknown-code")
 	assert.Equal(t, "Issuer(UNKNOWN)", code.String())
 
 	// ⚠️ Unsafe: create issuer code using literal
