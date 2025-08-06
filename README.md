@@ -51,13 +51,15 @@ docker-compose -f ./docker/docker-compose.yml up -d
 
 `go vet` and golangci-lint is recommended to use.
 
+You can find how install golangci-lint using docker in [Makefile](Makefile).
+
 Recommendation:
 golangci-lint/v2 bring a new feature to add custom formatters to golangci-lint config.
 Formatters will be executed using single command: 
 `golangci-lint fmt`.
 Formatters are automatically used as “linter” when you run the command `golangci-lint run`.
 
-add [goimports](#goimports-groups-import-sections) as custom formatter to golangci-lint config.
+add [goimports](#goimports-groups-and-sorts-import-sections) as custom formatter to golangci-lint config.
 
 #### Generate mocks using mockery
 

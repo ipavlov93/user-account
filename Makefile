@@ -17,10 +17,8 @@ gofmt:
 goimports:
 	goimports --local user-account/ -l -w .
 
-#golangci_lint_install:
-#	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 #golangci-lint:
-#	golangci-lint run
+#	docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v2.3.1 golangci-lint run
 
 # Generate mocks using mockery
 # Prerequisites: mockery.
