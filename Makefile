@@ -1,43 +1,55 @@
-include docker/.env
 
 BINARY_NAME=app
 
-# Makefile has list of following migrate commands using goose cli:
+# Makefile contains list of following commands:
 
-GOOSE_ENV=GOOSE_MIGRATION_DIR=${GOOSE_MIGRATION_DIR} GOOSE_DRIVER=${GOOSE_DRIVER} GOOSE_DBSTRING=${GOOSE_DBSTRING}
+# Development
 
-# always create new migration file and optionally apply sequential ordering to it (if previous files exist)"
-create_valid_migration: create_migration migrate_fix migrate_validate
+# run tests
+run_tests:
+	go test ./... -count 1
 
-create_migration:
-	@echo "Running goose create init sql"
-	$(GOOSE_ENV) goose create new_migration sql
+# formatting
+gofmt:
+	go fmt ./...
 
-migrate_version:
-	$(GOOSE_ENV) goose version
+# goimports groups and sorts import sections
+goimports:
+	goimports --local event-calendar/ -l -w .
 
-migrate_status:
-	$(GOOSE_ENV) goose status
+#golangci_lint_install:
+#	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+#golangci-lint:
+#	golangci-lint run
 
-migrate_fix:
-	@echo "Running goose fix to apply sequential ordering to migrations"
-	$(GOOSE_ENV) goose fix
+# Generate mocks using mockery
+# Prerequisites: mockery.
+# Check the latest tool's version on releases page.
+mockery_install:
+	go install github.com/vektra/mockery/v3@v3.3.2
 
-# migrate up with timeout
-migrate_up:
-	@echo "Running goose up to migrate the DB to the most recent version available"
-	$(GOOSE_ENV) goose up
+#generate_mock:
+	## example using mockery v2: mockery --name=UserService --dir=internal/service --output=internal/mocks
+	#mockery --name=$(INTERFACE_NAME) --dir=$(SOURCE_DIR) --output=$(OUTPUT_DIR)
 
-# migrate up-by-one with timeout
-migrate_up_by_one:
-	@echo "Running goose up to migrate the DB up-by-one"
-	$(GOOSE_ENV) goose up-by-one
+# Migration tool
+# Look at ./cmd/migrator/Makefile to use ready-to-use commands for running database migrations
+# Prerequisites: goose.
+goose_install:
+	go install github.com/pressly/goose/v3/cmd/goose@latest
 
-# migrate down-by-one with timeout
-migrate_down_by_one:
-	@echo "Running goose down to rollback the DB down-by-one"
-	$(GOOSE_ENV) goose down
+#----------------------------------------------------------------------------------------------------------
 
-migrate_validate:
-	@echo "Running goose validate migration files (goose syntax only) without running them"
-	$(GOOSE_ENV) goose validate
+# docker-compose commands for local development
+#
+# Prerequisites: Docker, docker-compose.
+
+docker_compose_build_and_run:
+	docker-compose -f ./docker/docker-compose.yml build && docker-compose -f ./docker/docker-compose.yml up -d
+
+docker_compose_build:
+	docker-compose -f ./docker/docker-compose.yml build
+
+docker_compose_run:
+	docker-compose -f ./docker/docker-compose.yml up -d
+
