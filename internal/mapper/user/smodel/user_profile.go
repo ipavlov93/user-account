@@ -2,6 +2,7 @@ package smodel
 
 import (
 	"net/mail"
+
 	"user-account/internal/domain"
 	"user-account/internal/dto/dmodel"
 	"user-account/internal/dto/smodel"

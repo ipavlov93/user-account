@@ -3,6 +3,7 @@ package domain
 import (
 	"fmt"
 	"time"
+
 	"user-account/internal/domain/role"
 )
 

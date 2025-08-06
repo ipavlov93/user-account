@@ -3,6 +3,7 @@ package userservice
 import (
 	"context"
 	"fmt"
+
 	"user-account/internal/domain"
 	"user-account/internal/option"
 	"user-account/internal/repository"

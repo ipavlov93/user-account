@@ -2,6 +2,7 @@ package test
 
 import (
 	"testing"
+
 	"user-account/internal/domain"
 
 	"github.com/stretchr/testify/assert"

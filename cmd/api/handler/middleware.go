@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+
 	"user-account/internal/domain/claims"
 	"user-account/internal/logger"
 	auth "user-account/internal/service/authorization"

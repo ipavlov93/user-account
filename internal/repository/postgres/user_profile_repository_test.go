@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"testing"
+
 	"user-account/internal/domain/test"
 
 	"github.com/DATA-DOG/go-sqlmock"

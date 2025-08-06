@@ -2,6 +2,7 @@ package test
 
 import (
 	"testing"
+
 	"user-account/internal/domain"
 	"user-account/internal/domain/role"
 

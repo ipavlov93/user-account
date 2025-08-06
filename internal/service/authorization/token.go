@@ -5,6 +5,7 @@ import (
 	"crypto"
 	"encoding/json"
 	"fmt"
+
 	"user-account/internal/domain/claims"
 
 	"github.com/MicahParks/jwkset"

@@ -2,6 +2,7 @@ package dmodel
 
 import (
 	"database/sql"
+
 	"user-account/internal/domain"
 	"user-account/internal/dto/dmodel"
 	"user-account/internal/dto/smodel"
