@@ -3,8 +3,7 @@ package firebase
 import (
 	"context"
 	"time"
-
-	errs "event-calendar/internal/error"
+	errs "user-account/internal/error"
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"

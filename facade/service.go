@@ -2,11 +2,10 @@ package facade
 
 import (
 	"context"
-
-	"event-calendar/internal/domain"
-	"event-calendar/internal/domain/claims"
-	"event-calendar/internal/domain/role"
-	"event-calendar/internal/option"
+	"user-account/internal/domain"
+	"user-account/internal/domain/claims"
+	"user-account/internal/domain/role"
+	"user-account/internal/option"
 
 	"firebase.google.com/go/v4/auth"
 )

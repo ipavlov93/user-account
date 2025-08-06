@@ -5,8 +5,7 @@ import (
 	"crypto"
 	"encoding/json"
 	"fmt"
-
-	"event-calendar/internal/domain/claims"
+	"user-account/internal/domain/claims"
 
 	"github.com/MicahParks/jwkset"
 	"github.com/golang-jwt/jwt/v5"

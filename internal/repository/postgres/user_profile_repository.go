@@ -8,13 +8,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-
-	"event-calendar/internal/domain"
-	"event-calendar/internal/dto/dmodel"
-	errs "event-calendar/internal/error"
-	"event-calendar/internal/logger"
-	mapper "event-calendar/internal/mapper/user/dmodel"
-	"event-calendar/internal/repository"
+	"user-account/internal/domain"
+	"user-account/internal/dto/dmodel"
+	errs "user-account/internal/error"
+	"user-account/internal/logger"
+	mapper "user-account/internal/mapper/user/dmodel"
+	"user-account/internal/repository"
 
 	"github.com/jmoiron/sqlx"
 )

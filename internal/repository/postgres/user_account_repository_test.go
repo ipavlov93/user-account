@@ -3,9 +3,8 @@ package postgres
 import (
 	"context"
 	"testing"
-
-	"event-calendar/internal/domain"
-	"event-calendar/internal/domain/test"
+	"user-account/internal/domain"
+	"user-account/internal/domain/test"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jmoiron/sqlx"

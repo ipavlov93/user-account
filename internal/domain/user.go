@@ -3,8 +3,7 @@ package domain
 import (
 	"fmt"
 	"time"
-
-	"event-calendar/internal/domain/role"
+	"user-account/internal/domain/role"
 )
 
 // User represents the registered (authenticated at least once) user

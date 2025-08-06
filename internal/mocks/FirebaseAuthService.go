@@ -3,11 +3,10 @@
 package mocks
 
 import (
-	claims "event-calendar/internal/domain/role"
-	auth "firebase.google.com/go/v4/auth"
-
 	context "context"
+	claims "user-account/internal/domain/role"
 
+	auth "firebase.google.com/go/v4/auth"
 	mock "github.com/stretchr/testify/mock"
 )
 

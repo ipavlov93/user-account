@@ -3,8 +3,7 @@ package meet
 import (
 	"fmt"
 	"time"
-
-	"event-calendar/internal/domain"
+	"user-account/internal/domain"
 )
 
 type Meet struct {

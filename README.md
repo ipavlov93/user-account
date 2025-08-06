@@ -45,7 +45,7 @@ docker-compose -f ./docker/docker-compose.yml up -d
 
 #### goimports groups and sorts import sections
 
-`goimports --local event-calendar/ -l -w .`
+`goimports --local user-account/ -l -w .`
 
 #### Linters
 

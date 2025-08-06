@@ -15,7 +15,7 @@ gofmt:
 
 # goimports groups and sorts import sections
 goimports:
-	goimports --local event-calendar/ -l -w .
+	goimports --local user-account/ -l -w .
 
 #golangci_lint_install:
 #	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest

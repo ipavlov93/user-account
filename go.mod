@@ -1,4 +1,4 @@
-module event-calendar
+module user-account
 
 go 1.24
 

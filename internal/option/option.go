@@ -1,7 +1,7 @@
 package option
 
 import (
-	"event-calendar/internal/repository"
+	"user-account/internal/repository"
 
 	"github.com/jmoiron/sqlx"
 )

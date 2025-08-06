@@ -1,9 +1,9 @@
 package smodel
 
 import (
-	"event-calendar/internal/domain"
-	"event-calendar/internal/dto/dmodel"
-	"event-calendar/internal/dto/smodel"
+	"user-account/internal/domain"
+	"user-account/internal/dto/dmodel"
+	"user-account/internal/dto/smodel"
 )
 
 func UserToUserDto(user domain.User) smodel.User {

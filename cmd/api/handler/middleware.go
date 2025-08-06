@@ -6,11 +6,10 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-
-	"event-calendar/internal/domain/claims"
-	"event-calendar/internal/logger"
-	auth "event-calendar/internal/service/authorization"
-	firebaseauth "event-calendar/internal/service/firebase"
+	"user-account/internal/domain/claims"
+	"user-account/internal/logger"
+	auth "user-account/internal/service/authorization"
+	firebaseauth "user-account/internal/service/firebase"
 
 	"go.uber.org/zap"
 )

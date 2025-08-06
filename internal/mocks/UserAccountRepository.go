@@ -4,7 +4,7 @@ package mocks
 
 import (
 	context "context"
-	domain "event-calendar/internal/domain"
+	domain "user-account/internal/domain"
 
 	mock "github.com/stretchr/testify/mock"
 )

@@ -3,9 +3,8 @@ package test
 import (
 	"fmt"
 	"time"
-
-	"event-calendar/internal/domain"
-	"event-calendar/internal/domain/claims"
+	"user-account/internal/domain"
+	"user-account/internal/domain/claims"
 )
 
 // file test.go contains helper function that is used in tests.

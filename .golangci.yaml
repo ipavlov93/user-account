@@ -12,4 +12,4 @@ linters:
 formatters:
   enable:
     - gofmt ./...
-    - goimports --local event-calendar/ -l -w .
+    - goimports --local user-account/ -l -w .

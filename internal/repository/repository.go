@@ -5,8 +5,7 @@ package repository
 
 import (
 	"context"
-
-	"event-calendar/internal/domain"
+	"user-account/internal/domain"
 
 	"github.com/jmoiron/sqlx"
 )

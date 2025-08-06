@@ -2,8 +2,7 @@ package test
 
 import (
 	"testing"
-
-	"event-calendar/internal/domain"
+	"user-account/internal/domain"
 
 	"github.com/stretchr/testify/assert"
 )

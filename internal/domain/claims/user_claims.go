@@ -1,7 +1,7 @@
 package claims
 
 import (
-	"event-calendar/internal/domain/role"
+	"user-account/internal/domain/role"
 )
 
 // UserClaims represents extracted claims from ID token that contains custom claims.
