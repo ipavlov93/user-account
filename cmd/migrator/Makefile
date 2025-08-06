@@ -1,13 +1,11 @@
-include ./app/.env
+include ../../docker/.env
 
-BINARY_NAME=app
+GOOSE_ENV=GOOSE_MIGRATION_DIR=../../internal/migrations/postgres GOOSE_DRIVER=${GOOSE_DRIVER} GOOSE_DBSTRING=${GOOSE_DBSTRING}
 
-# Makefile has list of following migrate commands using goose cli:
-
-GOOSE_ENV=GOOSE_MIGRATION_DIR=${GOOSE_MIGRATION_DIR} GOOSE_DRIVER=${GOOSE_DRIVER} GOOSE_DBSTRING=${GOOSE_DBSTRING}
-
+# Makefile has list of following migrate commands using goose cli tool:
+# Prerequisites: Go 1.16+, goose.
 goose_install:
-	go install github.com/pressly/goose/v3@latest
+	go install github.com/pressly/goose/v3/cmd/goose@latest
 
 # always create new migration file and optionally apply sequential ordering to it (if previous files exist)"
 create_valid_migration: create_migration migrate_fix migrate_validate
